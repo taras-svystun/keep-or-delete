@@ -172,3 +172,10 @@ Mac key can find it on the Mac. Lead, not yet checked on the phone: expo-image's
 `PhotoLibraryAssetLoader.swift` calls `requestImage` with iCloud download allowed but ignores
 `PHImageErrorKey` in the result, so a failed or very slow iCloud download leaves the photo black with no
 error. If the log shows "in iCloud true" and a percent under 100, that is the cause.
+
+## 2026-10-25: step 5b, eye state groups dropped
+
+Taras looked at "Eye state 0/1/2": 0 mixes open and closed eyes and people seen from the back, 1 is
+mostly eyes looking down (at a phone), 2 mostly open eyes. None means closed eyes, and all three
+together are just photos with faces, which the people groups already cover. Removed from
+`mac/probe.py`. Photos that stay black did not come back this time; the question stays open.

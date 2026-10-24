@@ -4,8 +4,8 @@ from types import SimpleNamespace
 from probe import build_groups
 
 
-def face(name, uuid=None, eyes=2):
-    return SimpleNamespace(person_info=SimpleNamespace(name=name, uuid=uuid or name), eye_state=eyes)
+def face(name, uuid=None):
+    return SimpleNamespace(person_info=SimpleNamespace(name=name, uuid=uuid or name))
 
 
 def photo(t, score=0.5, labels=(), text="", size=1, screenshot=False, movie=False, persons=(), place=None):
@@ -68,10 +68,3 @@ def test_faces_with_no_name_and_places_need_20_photos():
     assert "Unnamed person 1" in titles and "Lviv" in titles and "Kyiv" not in titles
     assert len(keys(g, "People, no one named")) == 20
 
-
-def test_one_group_per_eye_state():
-    a, b = photo(1, persons=["_UNKNOWN_"]), photo(2, persons=["_UNKNOWN_"])
-    a.face_info = [face(None, eyes=1), face(None, eyes=2)]
-    b.face_info = [face(None, eyes=1)]
-    g = build_groups([a, b])
-    assert len(keys(g, "Eye state 1")) == 2 and "Eye state 2" not in [x["title"] for x in g]

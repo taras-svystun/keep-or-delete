@@ -68,16 +68,13 @@ appears as a card, and a swipe decides whether it stays or goes.
 - How does the phone match a photo the Mac analysed (ids differ between devices)? Likely answer, untested:
   creation time to the millisecond plus width and height. See `docs/research/photo-metadata.md`.
 
-- **Eye state groups** (step 5b): Apple stores an eye state per face, 0, 1 or 2, with no meaning in
-  osxphotos. The app has groups "Eye state 0/1/2"; Taras looks and says which is closed eyes, then
-  rename that group "Closed eyes" and drop or rename the others.
 - **Photos that stay black** (step 5b): some photos still load after 10 s and never show, with no error.
   Five ids logged on 2026-10-24 (`ph://4AAD55F3-…`, `F6AF4FA8-…`, `0744200A-…`, `53B295D6-…`,
   `CB80A2B3-…`); none is a Mac uuid, so the Mac cannot say what they are. A stalled photo now logs its
   file name, media type, size, Mac key, whether it is in iCloud and how far it downloaded. Lead (from
   expo-image's source): when iOS fails to fetch a photo from iCloud, expo-image drops the error, so the
   photo stays black with nothing logged. Next: Taras swipes until it happens and sends the log.
-  Step 5b closes when both are settled.
+  Step 5b closes when this is settled.
 
 ## Steps
 
@@ -156,7 +153,7 @@ Apple's Photos on the Mac already computed, and our own model only where the fir
    7334. On the phone they come first on the start screen. Added after Taras's look: food, people with
    no one named, a group per named person, per face group Photos made with no name (20+ photos), and
    per place title of Photos' moments (20+ photos). Left out: shared albums (not his photos), closed
-   eyes (osxphotos does not say what its `eye_state` values mean).
+   eyes (Taras looked at eye states 0, 1 and 2: each mixes open and closed eyes, so they were dropped).
 
 6. **Decide on our own model (level 3, CLIP).** After 4 and 5, list what is still badly grouped (for
    example memes vs invitations among screenshots, if Apple's text and labels do not split them).

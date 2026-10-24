@@ -110,9 +110,6 @@ def build_groups(photos) -> list[dict]:
         ("Food", [p for p in camera if "Food" in p.search_info.labels]),
         ("People, no one named", [p for p in camera if p.face_info and not named(p)]),
     ]
-    # Photos store an eye state per face, 0, 1 or 2, and osxphotos does not say what each means. One
-    # group per value, so Taras can look and tell which is closed eyes (open question in docs/PLAN.md).
-    groups += [(f"Eye state {v}", [p for p in camera if any(f.eye_state == v for f in p.face_info)]) for v in (0, 1, 2)]
     # A group per person named in Photos' People album, per face Photos grouped but no one named,
     # and per place Photos titled a moment with; the biggest first. Photos' face groups and places
     # below 20 photos are mostly strangers seen once and short stops: too many tiny groups.

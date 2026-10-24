@@ -15,6 +15,21 @@ npx expo start
 
 Scan the QR code with the iPhone camera; it opens the app in Expo Go. Allow access to all photos.
 
+## Groups from the Mac (plan step 5)
+
+Apple's Photos on the Mac already analysed every photo (quality scores, labels, recognised text).
+A script reads that and serves it to the app on the home Wi-Fi. The Mac library must sync with the
+iPhone through iCloud Photos.
+
+```bash
+python3 -m venv mac/.venv && mac/.venv/bin/pip install osxphotos   # once
+mac/.venv/bin/python mac/probe.py                                  # report; writes mac/out/ (git-ignored)
+mac/.venv/bin/python -m http.server 8765 -d mac/out/public         # leave running beside expo start
+```
+
+The app logs in the `expo start` terminal how many phone photos match a Mac photo. `mac/out/` is
+personal data: never commit it. The server shares `mac/out/public/` with anyone on the same Wi-Fi.
+
 ## Test
 
 ```bash

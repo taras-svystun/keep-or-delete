@@ -94,3 +94,22 @@ Taras checked on the iPhone: group counts match Photos, and a photo decided in o
 in another. The album log showed English titles (the guess held), no Telegram album, three albums named
 Instagram (the index in group keys keeps them apart). Ideas recorded: smarter time groups (merge small
 months, trips and events from Photos' Memories) and a "Recently Saved" group.
+
+## 2026-10-24: step 5a, Mac probe (phone match pending)
+
+`mac/probe.py` reads the Mac Photos library with osxphotos 0.77.2 in `mac/.venv` (8 s for 7276 items:
+6758 photos, 518 videos, 2018 to today). Full Disk Access was not needed for the script, though `ls`
+on the library is blocked. Filled fields: quality score 100%, labels 84%, recognised text 40%, faces
+50%, named persons 21%, activities 15%, place 49%, moment 86% (1360 of 2286 moments have a place
+title). Empty or near: document types, ID documents, events, trips, landmarks, AI captions (all 0),
+holidays 29, venues 12, bursts 3 with none picked. Likely cause (estimate): these come with newer
+Photos than 9.6 on macOS 14, or bursts are not synced. The "Document" label stands in for documents:
+1919 screenshots and 338 camera photos; "Receipt" 28, "Handwriting" 43. Score deciles on camera photos
+run 0.16 to 0.59, so it spreads enough to sort by.
+Key: the phone (expo-media-library 58 `toMetadata`) rounds `creationDate` to whole milliseconds and
+gives `pixelWidth` x `pixelHeight`; the probe builds the same string. On the Mac 34 keys are shared by
+77 items, 14 even with the same filename (duplicate imports, estimate). The app fetches
+`mac/out/public/groups.json` from the Mac (port 8765, address from Expo's `hostUri`) and logs the
+match counts; logic in `mobile/src/mac.ts`, 2 unit tests. Chosen over bundling the file into the app:
+a git-ignored file that the app imports breaks the bundle on a fresh clone, and the fetch fails softly.
+Cost: the served file (keys only, no text or labels) is readable by anyone on the same Wi-Fi.

@@ -121,6 +121,11 @@ Apple's Photos on the Mac already computed, and our own model only where the fir
    b. If the probe holds: the script writes `groups.json` (photo key → groups) into the app's folder,
       git-ignored because it is personal data; the app shows these groups beside level 1. First
       candidates: worst shots first, receipts and documents, events, burst frames never picked.
+   Status of 5a: Mac part **done** (2026-10-24), phone match pending. Apple's fields on this Mac
+   (Photos 9.6, macOS 14): quality score 100%, labels 84% ("Document" on 338 camera photos, "Receipt"
+   28), recognised text 40%, named persons 21%, moments with a place title 1360 of 2286. Empty: document
+   types, events, trips, AI captions, burst picks (3 burst photos only). Key (ms time + size) is unique
+   for 7199 of 7276 Mac items. Details in `docs/journal.md`.
    Checks:
    - the probe matches at least 99% of phone photos to exactly one Mac photo;
    - a sample of 20 photos per new group looks right to Taras;

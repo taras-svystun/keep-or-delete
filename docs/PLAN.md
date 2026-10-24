@@ -14,6 +14,8 @@ appears as a card, and a swipe decides whether it stays or goes.
 - **Money**: spend nothing. Free tools first; a paid service only if nothing free works, and only after asking.
 - **Stack**: start with Expo Go (JavaScript/TypeScript, no Xcode). Do not upgrade the Mac or the iPhone
   unless a blocker forces it.
+- **Order of work**: first the smallest MVP that tests the idea. Then fundamentals (for example, working
+  away from the home Wi-Fi). Features come last, and only few: simple and working beats many features.
 - **Photo order**: by groups, not one long stream. First ideas for groups:
   - screenshots of events and invitations (usually outdated, so shown first);
   - screenshots of memes, jokes or interesting facts;
@@ -36,14 +38,19 @@ appears as a card, and a swipe decides whether it stays or goes.
 - With Expo Go the code is served from the Mac (`npx expo start`), so the Mac must run and share the Wi-Fi.
 - The Mac can read the Mac Photos library with `osxphotos` (Python), including Apple's own ML labels
   and AI captions, and can run Apple's text recognition per photo. This only helps if iCloud Photos
-  syncs the iPhone's photos to the Mac. ([osxphotos API](https://rhettbull.github.io/osxphotos/API_README.html))
+  syncs the iPhone's photos to the Mac, and it does: Taras pays for iCloud and the libraries sync. ([osxphotos API](https://rhettbull.github.io/osxphotos/API_README.html))
 - Closest open-source project found: sWipe (Expo, swipe to clean, Android only). ([FOSS Hack](https://fossunited.org/hack/fosshack25/p/naiadj2htq))
 
 ## Open questions
 
-- Is iCloud Photos on, so the Mac library holds the same photos?
 - How does the phone match a photo the Mac analysed (ids differ between devices)?
 
 ## Steps
 
-(none yet)
+1. **Swipe MVP in Expo Go, screenshots only.** Cards of screenshots; swipe right keeps, left marks for
+   delete; undo; a review screen with every marked photo checked; Done deletes them.
+   Checks:
+   - the app opens in Expo Go on the iPhone (iOS 18.7.8);
+   - it shows only screenshots, as many as the Photos "Screenshots" album;
+   - swipe, undo and the review screen behave as above (session logic covered by unit tests);
+   - after Done and the iOS prompt, the photos are in Recently Deleted.

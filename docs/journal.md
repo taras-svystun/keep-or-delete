@@ -204,3 +204,12 @@ text helps). Rules and prompts were written before reading the labels. A first r
 "other" photos as right because the probe skipped them and the fallback was "other"; fixed to count
 them wrong. Rare kinds need more examples, so step 7 starts with labelling aimed at them.
 Installed scikit-learn 1.9.1.
+
+## 2026-10-25: step 7, round two of labelling prepared
+
+`mac/kinds.py more` trains the probe on the 200 labels, embeds all 2292 screenshots (vectors cached in
+`mac/out/clip_vectors.npz`) and adds to the sample the 17 most likely each of invitation, tech and
+movie, shuffled: 51 photos marked `round: 2`. Scores now count only the random 200; round-2 photos
+only ever train, since a sample picked for rare kinds would inflate the score. With plain 5-fold
+splits instead of stratified ones the old labels score 70% for both probes (was 71% and 74%),
+which confirms the text gap was noise.

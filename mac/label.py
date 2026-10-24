@@ -52,21 +52,26 @@ def save_label(labels: dict[str, str], uuid: str, kind: str | None) -> dict[str,
     return labels
 
 
-def build_sample() -> list[dict]:
+def screenshots() -> dict:
+    """Every screenshot in the Mac Photos library that has a local preview, by uuid."""
     import osxphotos
 
-    shots = {p.uuid: p for p in osxphotos.PhotosDB().photos() if p.screenshot and p.path_derivatives}
-    sample = []
-    for uuid in pick_sample(list(shots)):
-        p = shots[uuid]
-        sample.append({
-            "uuid": uuid,
-            # The largest local preview; originals live in iCloud on this Mac.
-            "image": p.path_derivatives[0],
-            "text": " ".join(t for t, _ in p.detected_text()),
-            "labels": p.search_info.labels,
-        })
-    return sample
+    return {p.uuid: p for p in osxphotos.PhotosDB().photos() if p.screenshot and p.path_derivatives}
+
+
+def describe(p) -> dict:
+    return {
+        "uuid": p.uuid,
+        # The largest local preview; originals live in iCloud on this Mac.
+        "image": p.path_derivatives[0],
+        "text": " ".join(t for t, _ in p.detected_text()),
+        "labels": p.search_info.labels,
+    }
+
+
+def build_sample() -> list[dict]:
+    shots = screenshots()
+    return [describe(shots[u]) for u in pick_sample(list(shots))]
 
 
 def load_json(path: Path, default):

@@ -79,7 +79,7 @@ async function logMacMatch(shapes: Shape[]) {
   try {
     const mac = await fetchMacFile();
     const c = matchCounts(shapes, mac);
-    const missing = shapes.filter((s) => match(s, mac) === 'none').slice(0, 5);
+    const missing = shapes.filter((s) => match(s, mac) === 'none').slice(0, 10);
     console.log(
       `Mac match of ${shapes.length} phone items (Mac has ${Object.keys(mac.photos).length} keys): ` +
         `one ${c.one}, none ${c.none}, several ${c.several}. No match, first few: ${missing.map(macKey).join(', ')}`,

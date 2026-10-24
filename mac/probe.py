@@ -16,6 +16,8 @@ from pathlib import Path
 import osxphotos
 
 OUT = Path(__file__).parent / "out"
+# Seconds from 1970 to 2001, where Apple counts time from.
+APPLE_EPOCH = 978307200
 
 
 def key(p) -> str:
@@ -23,9 +25,12 @@ def key(p) -> str:
 
     The phone (expo-media-library 58, `toMetadata`) rounds `creationDate` to whole milliseconds the
     same way, and reads `pixelWidth` and `pixelHeight` of the current version, as `width` and
-    `height` do here.
+    `height` do here. The time is the raw database value (seconds since 2001), not `p.date`: that
+    datetime keeps only microseconds, which moves times like 51.4998 ms across the half and makes
+    keys 1 ms off from the phone's.
     """
-    return f"{round(p.date.timestamp() * 1000)}:{p.width}x{p.height}"
+    ms = round((p._info["imageDate_timestamp"] + APPLE_EPOCH) * 1000)
+    return f"{ms}:{p.width}x{p.height}"
 
 
 def filled(p) -> dict[str, bool]:

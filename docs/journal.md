@@ -113,3 +113,9 @@ gives `pixelWidth` x `pixelHeight`; the probe builds the same string. On the Mac
 match counts; logic in `mobile/src/mac.ts`, 2 unit tests. Chosen over bundling the file into the app:
 a git-ignored file that the app imports breaks the bundle on a fresh clone, and the fetch fails softly.
 Cost: the served file (keys only, no text or labels) is readable by anyone on the same Wi-Fi.
+
+First phone match: 6146 phone items, one 6043 (98.3%), none 78, several 25; under the 99% check.
+Cause of the first five misses: keys 1 ms off. osxphotos' `date` keeps only microseconds, so a time
+like 51.4998 ms became 51.5 and rounded up, while the phone rounds the full value down. Fix: the probe
+builds the key from the raw database time (`imageDate_timestamp`, seconds since 2001); checked that
+it gives the phone's key for all five. The other misses are not yet explained.

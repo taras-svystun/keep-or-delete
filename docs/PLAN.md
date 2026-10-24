@@ -52,6 +52,11 @@ appears as a card, and a swipe decides whether it stays or goes.
   subtypes (screenshot, livePhoto, panorama, hdr and a few more). It does **not** give a burst flag or
   the file size (read in `build/legacy/MediaLibrary.d.ts`).
 
+## Known risks
+
+- Apple says phone photo ids can change (new iPhone, some iOS updates); then saved decisions are lost
+  and kept photos show again. Too narrow to act on now.
+
 ## Open questions
 
 - How does the phone match a photo the Mac analysed (ids differ between devices)? Likely answer, untested:
@@ -91,14 +96,33 @@ appears as a card, and a swipe decides whether it stays or goes.
    smoothly. `PhotoImage` uses `expo-image`, which loads `ph://` ids at the view's size; the next card
    is loaded under the current one.
 
-4. **Groups.** A start screen lists groups with their photo counts; tapping one opens the same swipe
-   and review for that group only. Groups from free phone metadata (`docs/research/photo-metadata.md`,
-   level 1): screenshots, videos (longest first, shown as a still frame with the duration), bursts
-   (iOS smart album, if Expo returns it), the rest of the photos by month, oldest first.
+Steps 4-6 follow the three levels in `docs/research/photo-metadata.md`: what the phone knows, what
+Apple's Photos on the Mac already computed, and our own model only where the first two leave a gap.
+
+4. **Groups from phone metadata (level 1).** A start screen lists groups with their photo counts;
+   tapping one opens the same swipe and review for that group only. First, log which smart and app
+   albums Expo returns on the iPhone, then build: screenshots, screen recordings, videos (longest first,
+   a still frame with the duration), bursts, selfies, messenger albums (WhatsApp, Telegram), the rest
+   of the photos by month, oldest first.
    Checks:
-   - each group's count matches its album in Photos (screenshots, videos, bursts);
+   - each group's count matches its album in Photos;
    - a photo decided in one group does not show again in another;
    - grouping logic covered by unit tests.
 
-5. **A week of real use.** Taras cleans with the app; then we pick the next step from `docs/IDEAS.md`
-   by what got in the way.
+5. **Groups from Apple's analysis on the Mac (level 2).** Two parts.
+   a. Probe (needs no phone, can start any time): a Python script with osxphotos reads the Mac library,
+      reports which fields are filled (quality scores, recognised text, document types, events, labels)
+      and matches Mac photos to phone photos by creation time plus width and height.
+   b. If the probe holds: the script writes `groups.json` (photo key → groups) into the app's folder,
+      git-ignored because it is personal data; the app shows these groups beside level 1. First
+      candidates: worst shots first, receipts and documents, events, burst frames never picked.
+   Checks:
+   - the probe matches at least 99% of phone photos to exactly one Mac photo;
+   - a sample of 20 photos per new group looks right to Taras;
+   - `groups.json` is never committed.
+
+6. **Decide on our own model (level 3, CLIP).** After 4 and 5, list what is still badly grouped (for
+   example memes vs invitations among screenshots, if Apple's text and labels do not split them).
+   CLIP is a model that scores how well an image matches a short text ("a meme", "an invitation");
+   it runs on the Mac's M1. Use it only on that gap, delivered through the same `groups.json`.
+   Check: on 50 hand-labelled photos, CLIP sorts clearly better than level 1-2 alone; else drop it.

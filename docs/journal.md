@@ -65,3 +65,9 @@ dozen groups, including bursts and screen recordings through iOS smart albums; t
 (blurry shots, receipts, events, recognised text) is already computed by Apple and readable on the Mac
 with osxphotos. Sources: expo-media-library 58.0.12 source, Apple PHAssetCollectionSubtype, osxphotos API.
 Planned step 4 (groups from phone metadata) and step 5 (a week of use).
+
+## 2026-10-24: plan steps 4-6 follow the three metadata levels
+
+Taras wants levels 1 and 2 built now and CLIP decided after them, on evidence. Dropped the "week of use"
+step: Taras tests each step at once and reports ideas as they come. The Mac probe (5a) goes before the
+Mac-to-phone pipeline, so we learn whether the id match and Apple's fields hold before building on them.

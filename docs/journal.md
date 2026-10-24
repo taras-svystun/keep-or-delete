@@ -22,3 +22,16 @@ light and dark photos; a colour change alone would fail on photos of that colour
 The screenshot count matches the Photos album, so all step 1 checks passed. Planned steps 2 (remember
 decisions across restarts) and 3 (faster photos). Agreed to plan only 2-3 steps ahead, and to use
 `--tunnel` instead of a standalone app for now.
+
+## 2026-10-24: step 2, decisions survive a restart (device check pending)
+
+Every swipe and undo now writes all decisions (photo id → keep or delete) to `decisions.json` in the
+app's documents folder (`expo-file-system`, included in Expo Go). On start the app rebuilds the session
+from the library as it is now: kept photos are left out, marked ones come first and stay marked, new
+ones follow. Building from the live library means photos deleted anywhere never come back. On Done,
+deleted photos are forgotten and photos unchecked on the review screen count as kept.
+Why one JSON file, not SQLite: a few thousand ids is a few hundred KB, so rewriting it per swipe is
+cheap, and there is nothing to query. Accepted risk: if the app dies mid-write the file breaks, the app
+starts empty and kept photos show again. Revisit if it ever happens.
+Also: first `expo lint` run added ESLint; fixed its errors in `SwipeCard` (refs read during render)
+by dropping the callback ref, which was not needed.

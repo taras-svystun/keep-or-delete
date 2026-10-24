@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useState } from 'react';
 import { Animated, Dimensions, PanResponder, StyleSheet } from 'react-native';
 import { PhotoImage } from './PhotoImage';
 import type { Choice } from './session';
@@ -8,12 +8,11 @@ const SWIPE_THRESHOLD = SCREEN_WIDTH * 0.3;
 
 // One photo card. Drag right past the threshold to keep, left to delete; a short drag springs back.
 export function SwipeCard({ photoId, onSwipe }: { photoId: string; onSwipe: (c: Choice) => void }) {
-  const x = useRef(new Animated.Value(0)).current;
-  // The responder is created once, so it reads the latest callback through a ref.
-  const onSwipeRef = useRef(onSwipe);
-  onSwipeRef.current = onSwipe;
+  const [x] = useState(() => new Animated.Value(0));
+  // The responder is created once and keeps the first onSwipe. That is safe: each photo gets a new
+  // card (key={photo}), and the caller updates state with a function, so it never reads stale state.
 
-  const pan = useRef(
+  const [pan] = useState(() =>
     PanResponder.create({
       onMoveShouldSetPanResponder: (_, g) => Math.abs(g.dx) > 10,
       onPanResponderMove: (_, g) => x.setValue(g.dx),
@@ -27,10 +26,10 @@ export function SwipeCard({ photoId, onSwipe }: { photoId: string; onSwipe: (c: 
           toValue: Math.sign(g.dx) * SCREEN_WIDTH * 1.5,
           duration: 150,
           useNativeDriver: true,
-        }).start(() => onSwipeRef.current(choice));
+        }).start(() => onSwipe(choice));
       },
     }),
-  ).current;
+  );
 
   const rotate = x.interpolate({ inputRange: [-SCREEN_WIDTH, SCREEN_WIDTH], outputRange: ['-15deg', '15deg'] });
 

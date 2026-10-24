@@ -9,3 +9,4 @@ move it into `docs/PLAN.md`.
 - Run a small local model on the Mac (for example CLIP, which matches images to text like
   "invitation" or "meme") and send its results to the phone over the home Wi-Fi.
 - A smarter duplicates finder: compare image content, not only size and date.
+- A way to see kept photos again (today a kept photo never shows again; the only reset is deleting the app data).

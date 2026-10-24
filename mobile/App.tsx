@@ -1,11 +1,13 @@
 import { StatusBar } from 'expo-status-bar';
 import { Asset, AssetField, MediaSubtype, Query, requestPermissionsAsync } from 'expo-media-library';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { Decisions, recordReview, recordSession, resumeSession } from './src/decisions';
 import { ReviewScreen } from './src/ReviewScreen';
 import { SwipeCard } from './src/SwipeCard';
-import { currentPhoto, markedForDelete, remaining, Session, startSession, swipe, undo } from './src/session';
+import { currentPhoto, markedForDelete, Session, startSession, swipe, undo } from './src/session';
+import { loadDecisions, saveDecisions } from './src/storage';
 
 type Phase = 'loading' | 'swiping' | 'review';
 
@@ -22,6 +24,17 @@ export default function App() {
   const [phase, setPhase] = useState<Phase>('loading');
   const [session, setSession] = useState<Session>(startSession([]));
   const [message, setMessage] = useState('Loading screenshots…');
+  // Decisions from earlier runs plus this session's, written to the phone after every change.
+  const saved = useRef<Decisions>({});
+
+  useEffect(() => {
+    if (phase === 'loading') return;
+    saved.current = recordSession(saved.current, session);
+    saveDecisions(saved.current);
+  }, [session, phase]);
+
+  // Resumes from the library as it is now, so photos deleted anywhere never come back.
+  const resume = async (): Promise<Session> => resumeSession(await loadScreenshots(), saved.current);
 
   useEffect(() => {
     (async () => {
@@ -30,9 +43,10 @@ export default function App() {
         setMessage('No access to photos. Allow it in Settings → Expo Go → Photos.');
         return;
       }
-      const ids = await loadScreenshots();
-      setSession(startSession(ids));
-      setMessage(`${ids.length} screenshots found.`);
+      saved.current = loadDecisions();
+      const s = await resume();
+      setSession(s);
+      setMessage(`${s.photoIds.length} screenshots to go through.`);
       setPhase('swiping');
     })().catch((e) => setMessage(`Error: ${String(e)}`));
   }, []);
@@ -41,8 +55,12 @@ export default function App() {
     try {
       // iOS asks to confirm, then moves the photos to Recently Deleted.
       if (ids.length > 0) await Asset.delete(ids.map((id) => new Asset(id)));
-      setMessage(`Deleted ${ids.length}. ${remaining(session).length} screenshots left.`);
-      setSession(startSession(remaining(session)));
+      const spared = marked.filter((id) => !ids.includes(id));
+      saved.current = recordReview(saved.current, ids, spared);
+      saveDecisions(saved.current);
+      const s = await resume();
+      setMessage(`Deleted ${ids.length}. ${s.photoIds.length} screenshots left.`);
+      setSession(s);
       setPhase('swiping');
     } catch (e) {
       setMessage(`Not deleted: ${String(e)}`);

@@ -87,3 +87,10 @@ Fixed on the way: decisions were saved in every phase, which would write a finis
 back after Done once the app returns to groups; now they are saved only while swiping.
 Untested risk: the Bursts album returns one photo per burst; what deleting it does to the other frames
 is not checked.
+
+## 2026-10-24: step 4 done
+
+Taras checked on the iPhone: group counts match Photos, and a photo decided in one group does not show
+in another. The album log showed English titles (the guess held), no Telegram album, three albums named
+Instagram (the index in group keys keeps them apart). Ideas recorded: smarter time groups (merge small
+months, trips and events from Photos' Memories) and a "Recently Saved" group.

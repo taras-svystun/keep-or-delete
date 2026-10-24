@@ -12,3 +12,10 @@ move it into `docs/PLAN.md`.
   on the Mac (plan step 5).
 - Pinch to zoom a photo before deciding (Taras, 2026-10-24). Cheap: `react-native-gesture-handler` and
   `react-native-reanimated` are in Expo Go. The pinch must not fight the swipe.
+- Smarter time groups (Taras, 2026-10-24). One group per month gives 48+ groups over 4 years: old months
+  hold ~10 photos, recent ones 100-200. Merge small months until a group has about 100-200 photos (for
+  example "Spring 2022"). Better still for recent photos: group by trips and events, like the Memories
+  iPhone Photos makes ("Hiking on Borzhava", "Holidays in the Carpathians"). Expo cannot read those;
+  the Mac probe (plan step 5a) checks whether osxphotos can.
+- A "Recently Saved" group: iOS smart album of photos saved from other apps (2572 on Taras's iPhone),
+  likely memes and downloads. It is reachable by title, like Selfies.

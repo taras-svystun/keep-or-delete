@@ -109,13 +109,14 @@ Apple's Photos on the Mac already computed, and our own model only where the fir
    - a photo decided in one group does not show again in another;
    - grouping logic covered by unit tests.
 
-   Status: **built, iPhone check pending** (2026-10-24). Logging and building were merged into one
-   device round: the app prints every album title and count to the `npx expo start` terminal, so a
-   group missing on the phone shows there by its real title. Unit tests pass (7 new).
+   Status: **done** (2026-10-24). Taras checked on the iPhone: counts match Photos (checked 2-3 groups),
+   a selfie kept in its month no longer shows in Selfies. The album log confirmed English titles; there
+   is no Telegram album; "Recently Saved" (2572) is a smart album of photos saved from other apps.
 
 5. **Groups from Apple's analysis on the Mac (level 2).** Two parts.
    a. Probe (needs no phone, can start any time): a Python script with osxphotos reads the Mac library,
-      reports which fields are filled (quality scores, recognised text, document types, events, labels)
+      reports which fields are filled (quality scores, recognised text, document types, events, labels,
+      and the trips and Memories Photos builds, such as "Hiking on Borzhava")
       and matches Mac photos to phone photos by creation time plus width and height.
    b. If the probe holds: the script writes `groups.json` (photo key → groups) into the app's folder,
       git-ignored because it is personal data; the app shows these groups beside level 1. First

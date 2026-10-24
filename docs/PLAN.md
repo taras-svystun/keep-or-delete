@@ -109,6 +109,10 @@ Apple's Photos on the Mac already computed, and our own model only where the fir
    - a photo decided in one group does not show again in another;
    - grouping logic covered by unit tests.
 
+   Status: **built, iPhone check pending** (2026-10-24). Logging and building were merged into one
+   device round: the app prints every album title and count to the `npx expo start` terminal, so a
+   group missing on the phone shows there by its real title. Unit tests pass (7 new).
+
 5. **Groups from Apple's analysis on the Mac (level 2).** Two parts.
    a. Probe (needs no phone, can start any time): a Python script with osxphotos reads the Mac library,
       reports which fields are filled (quality scores, recognised text, document types, events, labels)

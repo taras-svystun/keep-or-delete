@@ -71,3 +71,19 @@ Planned step 4 (groups from phone metadata) and step 5 (a week of use).
 Taras wants levels 1 and 2 built now and CLIP decided after them, on evidence. Dropped the "week of use"
 step: Taras tests each step at once and reports ideas as they come. The Mac probe (5a) goes before the
 Mac-to-phone pipeline, so we learn whether the id match and Apple's fields hold before building on them.
+
+## 2026-10-24: step 4, groups from phone metadata (device check pending)
+
+A start screen lists groups with "to go · total"; tapping one opens the same swipe and review for that
+group. One metadata query reads the whole library (id, type, date, duration, subtypes), and pure code
+in `mobile/src/groups.ts` builds: screenshots, screen recordings (Expo 58's new `screenRecording`
+subtype, so no album needed), videos longest first with the duration on the card, then albums, then
+the other photos by month, oldest first. Selfies and Bursts have no subtype, so they come from iOS smart
+albums matched by English title; messenger albums by name (WhatsApp, Telegram, ...). Titles are a guess
+about the language Expo Go uses, so the app logs every album title and count instead of a separate
+logging step first.
+Decisions stay one shared map, so overlap between groups (a selfie is also in its month) is harmless.
+Fixed on the way: decisions were saved in every phase, which would write a finished session's marks
+back after Done once the app returns to groups; now they are saved only while swiping.
+Untested risk: the Bursts album returns one photo per burst; what deleting it does to the other frames
+is not checked.

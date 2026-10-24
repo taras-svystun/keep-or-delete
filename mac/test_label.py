@@ -17,3 +17,4 @@ def test_save_label_sets_replaces_and_removes():
     assert save_label(labels, "a", None) == {}
     with pytest.raises(ValueError):
         save_label(labels, "a", "cats")
+

@@ -190,3 +190,17 @@ screenshots and named the kinds (see `docs/PLAN.md`, step 6). `mac/label.py` ser
 `mac/out/labels.json` (git-ignored). Originals are in iCloud on this Mac, so the page shows the local
 preview (up to 360x778), also enough for CLIP's 224 px input. Installed torch 2.14.1 and open_clip
 3.3.0 in `mac/.venv` (now 951 MB); the M1 GPU (MPS) is available. Tests: 2 pytest in `mac/test_label.py`.
+
+## 2026-10-25: step 6 done, CLIP kept
+
+Taras labelled 200 random screenshots (some hard to place, so the labels are a little noisy).
+Per kind: profile 70, shopping 22, map 19, fact 19, music 18, chat 15, meme 14, invitation 7, tech 6,
+movie 6, other 4. Profiles and people are a third of all screenshots, the biggest kind. Scores
+(`mac/kinds.py`): always "profile" 35%; text rules 43% (good on maps and chats, blind to memes and
+invitations); CLIP zero-shot 48% (ViT-B-32, laion2b; finds memes and maps, guesses "other" for 49
+photos); a logistic regression on CLIP image vectors, 5-fold cross-validated, 71%; with text pieces
+added, 74%. The 7-photo gap is noise (verdict: keep the simpler image-only probe unless round two shows
+text helps). Rules and prompts were written before reading the labels. A first run counted the 4
+"other" photos as right because the probe skipped them and the fallback was "other"; fixed to count
+them wrong. Rare kinds need more examples, so step 7 starts with labelling aimed at them.
+Installed scikit-learn 1.9.1.

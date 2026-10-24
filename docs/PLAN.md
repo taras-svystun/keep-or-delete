@@ -161,10 +161,18 @@ Apple's Photos on the Mac already computed, and our own model only where the fir
    it runs on the Mac's M1. Use it only on that gap, delivered through the same `groups.json`.
    Check: on 50 hand-labelled photos, CLIP sorts clearly better than level 1-2 alone; else drop it.
 
-   Status (2026-10-25): in progress. The gap is screenshots: 2292, 96% with recognised text and 77%
-   labelled "Document", so Apple's fields do not tell kinds apart. Kinds agreed with Taras: invitation
-   or event, meme, fact or tip, tech post, chat, map, shopping or ticket, profile or person, music
-   (Shazam), movie, other. Answer key: Taras labels a fixed random sample of 200 in `mac/label.py`
-   (keys 1-9, 0, o; localhost only), more than 50 so each kind gets enough photos. Then text rules
-   (level 2) and CLIP are scored against it; both are written before looking at the labels, so neither
-   is tuned to the answer key.
+   Status: **done** (2026-10-25). Check passed. On Taras's 200 labelled screenshots (5-fold
+   cross-validation, so no photo is judged by a model that saw it): always "profile" 35%, text rules
+   43%, CLIP zero-shot 48%, logistic regression on CLIP image vectors 71%, the same plus text 74% (the
+   3 points are noise at 200 photos). Rare kinds (invitation 7, tech 6, movie 6) are barely found:
+   too few examples to learn from. Kinds agreed with Taras: invitation or event, meme, fact or tip,
+   tech post, chat, map, shopping or ticket, profile or person, music (Shazam), movie, other.
+   Labelling page `mac/label.py`, scoring `mac/kinds.py`. Details in `docs/journal.md`.
+
+7. **Screenshot kinds as groups.** First, a second labelling round aimed at the rare kinds: the page
+   shows screenshots the model rates most likely invitation, tech or movie, so 50 clicks add many
+   examples where a random sample adds few. Then the model sorts all 2292 screenshots and
+   `mac/probe.py` writes one group per kind into `groups.json`, keys only.
+   Checks:
+   - cross-validated accuracy stays at 70%+ and invitations are found in at least half the cases;
+   - each kind group shows on the phone and a look at 20 photos per group seems right to Taras.

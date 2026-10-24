@@ -159,3 +159,7 @@ Photos made with no name (9 with 20+ photos; the 3126 clusters are mostly strang
 place title of Photos' moments (28 with 20+ photos, same title merged across moments). Groups of one
 photo are left out. Not built: closed eyes, since `eye_state` holds 0, 1 or 2 with no meaning in
 osxphotos' docs or source (2 is the most common, so maybe "open"; a guess).
+
+Taras checked the new groups: they fit. Added groups "Eye state 0", "1", "2" so Taras can say which
+value means closed eyes. Black photos came back: five logged "still loading after 10 s", none with an
+error, none found on the Mac by uuid. Both are open questions in `docs/PLAN.md` for the next session.

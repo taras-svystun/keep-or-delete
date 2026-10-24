@@ -68,6 +68,15 @@ appears as a card, and a swipe decides whether it stays or goes.
 - How does the phone match a photo the Mac analysed (ids differ between devices)? Likely answer, untested:
   creation time to the millisecond plus width and height. See `docs/research/photo-metadata.md`.
 
+- **Eye state groups** (step 5b): Apple stores an eye state per face, 0, 1 or 2, with no meaning in
+  osxphotos. The app has groups "Eye state 0/1/2"; Taras looks and says which is closed eyes, then
+  rename that group "Closed eyes" and drop or rename the others.
+- **Photos that stay black** (step 5b): some photos still load after 10 s and never show, with no error.
+  Five ids logged on 2026-10-24 (`ph://4AAD55F3-…`, `F6AF4FA8-…`, `0744200A-…`, `53B295D6-…`,
+  `CB80A2B3-…`); none is a Mac uuid, so the Mac cannot say what they are. Next: log the group, media type,
+  size and download progress (expo-image `onProgress`) of a stalled photo, then find the cause.
+  Step 5b closes when both are settled.
+
 ## Steps
 
 1. **Swipe MVP in Expo Go, screenshots only.** Cards of screenshots; swipe right keeps, left marks for

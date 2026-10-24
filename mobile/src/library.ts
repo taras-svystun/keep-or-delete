@@ -3,7 +3,7 @@
 import Constants from 'expo-constants';
 import { Album, AssetField, MediaType, Query, SortDescriptor } from 'expo-media-library';
 import { AlbumIds, buildGroups, Group, Item } from './groups';
-import { macKey, MacFile, match, matchCounts, Shape } from './mac';
+import { macGroups, macKey, MacFile, matchCounts, Shape } from './mac';
 
 export type Library = { groups: Group[]; durations: Record<string, number> };
 
@@ -16,18 +16,22 @@ const MESSENGERS = /whatsapp|telegram|instagram|viber|signal|messenger/i;
 const oldestFirst: SortDescriptor = { key: AssetField.CREATION_TIME, ascending: true };
 
 export async function loadLibrary(): Promise<Library> {
-  const assets = await new Query().orderBy(oldestFirst).exeForMetadata();
-  const items: Item[] = assets
-    .filter((a) => a.mediaType === MediaType.IMAGE || a.mediaType === MediaType.VIDEO)
-    .map((a) => ({
-      id: a.id,
-      mediaType: a.mediaType === MediaType.VIDEO ? 'video' : 'image',
-      creationTime: a.creationTime,
-      duration: a.duration,
-      subtypes: a.mediaSubtypes ?? [],
-    }));
-  // Not awaited: the check only logs, so the groups need not wait for the Mac.
-  logMacMatch(assets.filter((a) => a.mediaType === MediaType.IMAGE || a.mediaType === MediaType.VIDEO));
+  // Asked first, so the Mac answers while the phone reads its library. Without the Mac, the phone
+  // groups still show.
+  const mac = fetchMacFile().catch((e) => {
+    console.log(`Mac groups: no groups.json from the Mac (${String(e)})`);
+    return null;
+  });
+  const media = (await new Query().orderBy(oldestFirst).exeForMetadata()).filter(
+    (a) => a.mediaType === MediaType.IMAGE || a.mediaType === MediaType.VIDEO,
+  );
+  const items: Item[] = media.map((a) => ({
+    id: a.id,
+    mediaType: a.mediaType === MediaType.VIDEO ? 'video' : 'image',
+    creationTime: a.creationTime,
+    duration: a.duration,
+    subtypes: a.mediaSubtypes ?? [],
+  }));
 
   const smart = await Promise.all(
     (await Album.getSmartAlbums()).map(async (album) => ({ album, title: await album.getTitle().catch(() => '') })),
@@ -48,7 +52,10 @@ export async function loadLibrary(): Promise<Library> {
 
   const durations: Record<string, number> = {};
   for (const i of items) if (i.duration) durations[i.id] = i.duration;
-  return { groups: buildGroups(items, albums), durations };
+  // Apple's analysis first: it finds what to delete better than dates and albums do.
+  const macFile = await mac;
+  if (macFile) logMacMatch(media, macFile);
+  return { groups: [...(macFile ? macGroups(media, macFile) : []), ...buildGroups(items, albums)], durations };
 }
 
 // Shows in the terminal running `npx expo start`: every album title and its count, to match by
@@ -75,16 +82,12 @@ async function fetchMacFile(): Promise<MacFile> {
 }
 
 // Shows in the terminal how many phone photos find exactly one Mac photo, plus a few that find none.
-async function logMacMatch(shapes: Shape[]) {
-  try {
-    const mac = await fetchMacFile();
-    const c = matchCounts(shapes, mac);
-    const missing = shapes.filter((s) => match(s, mac) === 'none').slice(0, 10);
-    console.log(
-      `Mac match of ${shapes.length} phone items (Mac has ${Object.keys(mac.photos).length} keys): ` +
-        `one ${c.one}, none ${c.none}, several ${c.several}. No match, first few: ${missing.map(macKey).join(', ')}`,
-    );
-  } catch (e) {
-    console.log(`Mac match: no groups.json from the Mac (${String(e)})`);
-  }
+function logMacMatch(shapes: Shape[], mac: MacFile) {
+  const c = matchCounts(shapes, mac);
+  const all = new Set(mac.photos);
+  const missing = shapes.map(macKey).filter((k) => k === null || !all.has(k)).slice(0, 10);
+  console.log(
+    `Mac match of ${shapes.length} phone items (Mac has ${mac.photos.length} keys): ` +
+      `one ${c.one}, none ${c.none}, several ${c.several}. No match, first few: ${missing.join(', ')}`,
+  );
 }

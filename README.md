@@ -22,12 +22,14 @@ A script reads that and serves it to the app on the home Wi-Fi. The Mac library 
 iPhone through iCloud Photos.
 
 ```bash
-python3 -m venv mac/.venv && mac/.venv/bin/pip install osxphotos   # once
-mac/.venv/bin/python mac/probe.py                                  # report; writes mac/out/ (git-ignored)
-mac/.venv/bin/python -m http.server 8765 -d mac/out/public         # leave running beside expo start
+python3 -m venv mac/.venv && mac/.venv/bin/pip install osxphotos pytest   # once
+mac/.venv/bin/python mac/probe.py                                         # report and groups; writes mac/out/ (git-ignored)
+mac/.venv/bin/python -m http.server 8765 -d mac/out/public                # leave running beside expo start
 ```
 
-The app logs in the `expo start` terminal how many phone photos match a Mac photo. `mac/out/` is
+The app shows the Mac's groups first on the start screen, and logs in the `expo start` terminal how
+many phone photos match a Mac photo. After a new `probe.py` run, press `r` in the `expo start` window
+and open the app on the iPhone to load the new groups. Python tests: `cd mac && .venv/bin/python -m pytest`. `mac/out/` is
 personal data: never commit it. The server shares `mac/out/public/` over plain HTTP with anyone on
 the same Wi-Fi: run it only at home, and stop it (Ctrl+C) when done. Rule in `docs/PLAN.md`.
 

@@ -1,5 +1,5 @@
-"""Probe the Mac Photos library: which of Apple's fields are filled, and whether photos can be
-matched to the phone by key.
+"""Read Apple's analysis from the Mac Photos library: report which fields are filled, and write
+groups for the phone, with every photo's key so the phone can match its photos.
 
 Prints only counts, so the output is safe to paste into the journal. Per-photo details (labels,
 places, text) go to mac/out/, which is git-ignored because it is personal data. The file for the
@@ -86,6 +86,27 @@ def detail(p) -> dict:
     }
 
 
+# Labels Apple puts on photos of paper and cards: usually taken to note something, then forgotten.
+# Not "Map", "Sign" or "Book": those are often travel photos.
+DOCUMENT_LABELS = {"Document", "Printed Page", "Receipt", "Handwriting", "Ticket", "Paper", "Menu",
+                   "Whiteboard", "Chalkboard", "Chart", "Newspaper", "Nutrition Facts Label", "Credit Card"}
+
+
+def build_groups(photos) -> list[dict]:
+    """Groups for the phone, each a title and photo keys in the order the cards show.
+
+    Camera photos means photos that are not screenshots: the phone already has a screenshots group.
+    """
+    camera = sorted((p for p in photos if p.isphoto and not p.screenshot), key=lambda p: p.date)
+    groups = [
+        ("Worst shots first", sorted(camera, key=lambda p: p.score.overall)),
+        ("Documents and receipts", [p for p in camera if DOCUMENT_LABELS & set(p.search_info.labels)]),
+        ("Photos with text", [p for p in camera if p.search_info.detected_text]),
+        ("Biggest files first", sorted(photos, key=lambda p: -(p.original_filesize or 0))),
+    ]
+    return [{"title": t, "keys": [key(p) for p in ps]} for t, ps in groups if ps]
+
+
 def main():
     db = osxphotos.PhotosDB()
     photos = db.photos()
@@ -109,9 +130,14 @@ def main():
     with_name = Counter((key(p), p.original_filename) for p in photos)
     print(f"Key plus filename: {sum(c for c in with_name.values() if c > 1)} items still share one")
 
-    # Groups come in plan step 5b; for now every photo has none, so the phone can test the match.
+    groups = build_groups(photos)
+    print("\nGroups for the phone:")
+    for g in groups:
+        print(f"  {g['title']:24} {len(g['keys']):6}")
+
+    # Only keys and group titles: this file goes over plain HTTP (rule in docs/PLAN.md).
     (OUT / "public").mkdir(parents=True, exist_ok=True)
-    phone = {"photos": {key(p): [] for p in photos}, "shared": sorted(shared_keys)}
+    phone = {"photos": sorted(by_key), "shared": sorted(shared_keys), "groups": groups}
     (OUT / "public" / "groups.json").write_text(json.dumps(phone))
     (OUT / "photos.json").write_text(json.dumps([detail(p) for p in photos], ensure_ascii=False, indent=1))
     print(f"\nPer-photo details: {OUT / 'photos.json'}")

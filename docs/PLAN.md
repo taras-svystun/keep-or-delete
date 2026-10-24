@@ -125,8 +125,9 @@ Apple's Photos on the Mac already computed, and our own model only where the fir
       and the trips and Memories Photos builds, such as "Hiking on Borzhava")
       and matches Mac photos to phone photos by creation time plus width and height.
    b. If the probe holds: the script writes `groups.json` (photo key → groups) into the app's folder,
-      git-ignored because it is personal data; the app shows these groups beside level 1. First
-      candidates: worst shots first, receipts and documents, events, burst frames never picked.
+      git-ignored because it is personal data; the app shows these groups beside level 1. Groups:
+      worst shots first, documents and receipts, photos with text, biggest files first. Events and
+      burst picks dropped: Apple left them empty on this Mac (5a).
    Status of 5a: **done** (2026-10-24). Phone match: 6088 of 6144 phone items (99.1%) find exactly
    one Mac photo; 31 none (mostly October 2026 photos not on the Mac), 25 several (images with
    whole-second times, saved from apps). Apple's fields on this Mac
@@ -138,6 +139,11 @@ Apple's Photos on the Mac already computed, and our own model only where the fir
    - the probe matches at least 99% of phone photos to exactly one Mac photo;
    - a sample of 20 photos per new group looks right to Taras;
    - `groups.json` is never committed.
+
+   Status of 5b: built (2026-10-24), device check pending. Counts on the Mac: worst shots 4315 (camera
+   photos, lowest Apple score first), documents and receipts 332, photos with text 951, biggest files
+   7334. On the phone they come first on the start screen. Open question for Taras: groups per named
+   person (osxphotos has them), which would send names over HTTP against the rule above.
 
 6. **Decide on our own model (level 3, CLIP).** After 4 and 5, list what is still badly grouped (for
    example memes vs invitations among screenshots, if Apple's text and labels do not split them).

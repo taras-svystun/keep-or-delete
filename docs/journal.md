@@ -129,3 +129,16 @@ with several: all 34 shared Mac keys have whole-second times (.000 ms), 18 of 77
 none are bursts, and only 7 keys share a filename. So they are app-saved images and videos, not
 burst frames; they get no Mac groups. Accepted: 0.4% of photos. Agreed a rule for sending Mac data
 over the network (`docs/PLAN.md`, Agreed).
+
+## 2026-10-24: step 5b, groups from the Mac (device check pending)
+
+`mac/probe.py` now writes four groups into `groups.json`, keys only, in card order: worst shots first
+(camera photos, i.e. not screenshots, by Apple's overall score), documents and receipts (labels such as
+Document, Printed Page, Receipt, Handwriting, Ticket, Credit Card; not Map, Sign or Book, which are
+often travel photos), photos with text (Apple's recognised text), biggest files first (all items,
+`original_filesize`, so the real size instead of video duration). The phone turns keys into its ids
+(`macGroups` in `mobile/src/mac.ts`), drops keys several photos share on either side, and puts these
+groups first. It asks the Mac at the start of loading, so the wait overlaps the library read; without
+the Mac the phone groups still show. Tests: 2 pytest (`mac/test_probe.py`), 4 jest in `mac.test.ts`.
+People: osxphotos reads named persons (21% of photos), but group titles would be names sent over
+plain HTTP, against the rule agreed in step 5a; asked Taras.

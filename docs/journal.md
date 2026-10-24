@@ -214,7 +214,6 @@ only ever train, since a sample picked for rare kinds would inflate the score. W
 splits instead of stratified ones the old labels score 70% for both probes (was 71% and 74%),
 which confirms the text gap was noise.
 
-
 ## 2026-10-25: step 7, screenshot kinds as groups (phone check pending)
 
 Round two labels: movie 14, fact 10, invitation 9, tech 8, meme 7, profile 2, shopping 1. On the random

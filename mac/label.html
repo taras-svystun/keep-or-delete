@@ -1,0 +1,79 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Label screenshots</title>
+<style>
+  body { margin: 0; font: 15px -apple-system, sans-serif; background: #111; color: #eee;
+         display: flex; height: 100vh; }
+  #photo { flex: 1; display: flex; align-items: center; justify-content: center; }
+  #photo img { max-height: 96vh; max-width: 100%; }
+  #side { width: 340px; padding: 16px; display: flex; flex-direction: column; gap: 8px; }
+  button { text-align: left; padding: 10px 12px; font: inherit; color: #eee; background: #2a2a2a;
+           border: 2px solid transparent; border-radius: 8px; cursor: pointer; }
+  button:hover { background: #3a3a3a; }
+  button.on { border-color: #4caf50; }
+  kbd { display: inline-block; width: 1.4em; color: #4caf50; font-weight: bold; }
+  #bar { height: 6px; background: #333; border-radius: 3px; }
+  #bar div { height: 100%; background: #4caf50; border-radius: 3px; }
+  .hint { color: #888; font-size: 13px; }
+</style>
+</head>
+<body>
+<div id="photo"><img id="img"></div>
+<div id="side">
+  <div id="count"></div>
+  <div id="bar"><div id="fill"></div></div>
+  <div id="buttons"></div>
+  <div class="hint">Press a key or click. ← back, → forward. Each answer is saved at once.</div>
+</div>
+<script>
+const KEYS = "1234567890o";
+let kinds, sample, labels, i = 0;
+
+async function start() {
+  ({kinds, sample, labels} = await (await fetch("/data")).json());
+  const buttons = document.getElementById("buttons");
+  Object.entries(kinds).forEach(([kind, title], n) => {
+    const b = document.createElement("button");
+    b.dataset.kind = kind;
+    b.innerHTML = `<kbd>${KEYS[n]}</kbd> ${title}`;
+    b.onclick = () => answer(kind);
+    buttons.append(b);
+  });
+  i = sample.findIndex(u => !(u in labels));
+  if (i < 0) i = sample.length - 1;
+  show();
+}
+
+function show() {
+  const uuid = sample[i];
+  document.getElementById("img").src = "/img/" + uuid;
+  const done = Object.keys(labels).length;
+  document.getElementById("count").textContent = `Photo ${i + 1} of ${sample.length} · labelled ${done}`;
+  document.getElementById("fill").style.width = (100 * done / sample.length) + "%";
+  document.querySelectorAll("button").forEach(b => b.classList.toggle("on", labels[uuid] === b.dataset.kind));
+  // Load the next photo now, so it shows without a wait.
+  if (i + 1 < sample.length) new Image().src = "/img/" + sample[i + 1];
+}
+
+async function answer(kind) {
+  const uuid = sample[i];
+  const r = await fetch("/label", {method: "POST", body: JSON.stringify({uuid, kind})});
+  if (!r.ok) { alert(await r.text()); return; }
+  labels[uuid] = kind;
+  if (i + 1 < sample.length) i++;
+  show();
+}
+
+document.addEventListener("keydown", e => {
+  const n = KEYS.indexOf(e.key.toLowerCase());
+  if (n >= 0) answer(Object.keys(kinds)[n]);
+  else if (e.key === "ArrowLeft" && i > 0) { i--; show(); }
+  else if (e.key === "ArrowRight" && i + 1 < sample.length) { i++; show(); }
+});
+
+start();
+</script>
+</body>
+</html>

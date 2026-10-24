@@ -179,3 +179,14 @@ Taras looked at "Eye state 0/1/2": 0 mixes open and closed eyes and people seen 
 mostly eyes looking down (at a phone), 2 mostly open eyes. None means closed eyes, and all three
 together are just photos with faces, which the people groups already cover. Removed from
 `mac/probe.py`. Photos that stay black did not come back this time; the question stays open.
+
+## 2026-10-25: step 6, gap found and labelling page built
+
+What level 1-2 knows about the 2292 screenshots on the Mac: recognised text on 2211 (501 with 200+
+characters), "Document" label on 1759, "People" on 715; only 20 have neither. So text and labels exist
+for almost all, but they do not tell a meme from an invitation or a chat. Taras agreed to start with
+screenshots and named the kinds (see `docs/PLAN.md`, step 6). `mac/label.py` serves a page on
+127.0.0.1:8766: one screenshot, a key or click per kind, each answer saved at once to
+`mac/out/labels.json` (git-ignored). Originals are in iCloud on this Mac, so the page shows the local
+preview (up to 360x778), also enough for CLIP's 224 px input. Installed torch 2.14.1 and open_clip
+3.3.0 in `mac/.venv` (now 951 MB); the M1 GPU (MPS) is available. Tests: 2 pytest in `mac/test_label.py`.

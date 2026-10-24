@@ -160,3 +160,11 @@ Apple's Photos on the Mac already computed, and our own model only where the fir
    CLIP is a model that scores how well an image matches a short text ("a meme", "an invitation");
    it runs on the Mac's M1. Use it only on that gap, delivered through the same `groups.json`.
    Check: on 50 hand-labelled photos, CLIP sorts clearly better than level 1-2 alone; else drop it.
+
+   Status (2026-10-25): in progress. The gap is screenshots: 2292, 96% with recognised text and 77%
+   labelled "Document", so Apple's fields do not tell kinds apart. Kinds agreed with Taras: invitation
+   or event, meme, fact or tip, tech post, chat, map, shopping or ticket, profile or person, music
+   (Shazam), movie, other. Answer key: Taras labels a fixed random sample of 200 in `mac/label.py`
+   (keys 1-9, 0, o; localhost only), more than 50 so each kind gets enough photos. Then text rules
+   (level 2) and CLIP are scored against it; both are written before looking at the labels, so neither
+   is tuned to the answer key.

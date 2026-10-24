@@ -92,6 +92,10 @@ DOCUMENT_LABELS = {"Document", "Printed Page", "Receipt", "Handwriting", "Ticket
                    "Whiteboard", "Chalkboard", "Chart", "Newspaper", "Nutrition Facts Label", "Credit Card"}
 
 
+# Smallest group of faces with no name, or of one place.
+MIN_SIZE = 20
+
+
 def build_groups(photos) -> list[dict]:
     """Groups for the phone, each a title and photo keys in the order the cards show.
 
@@ -103,14 +107,34 @@ def build_groups(photos) -> list[dict]:
         ("Documents and receipts", [p for p in camera if is_document(p)]),
         ("Photos with text", [p for p in camera if p.search_info.detected_text]),
         ("Biggest files first", sorted(photos, key=lambda p: -(p.original_filesize or 0))),
+        ("Food", [p for p in camera if "Food" in p.search_info.labels]),
+        ("People, no one named", [p for p in camera if p.face_info and not named(p)]),
     ]
-    # One group per person named in Photos' People album, the person with most photos first.
-    by_person: dict[str, list] = {}
+    # A group per person named in Photos' People album, per face Photos grouped but no one named,
+    # and per place Photos titled a moment with; the biggest first. Photos' face groups and places
+    # below 20 photos are mostly strangers seen once and short stops: too many tiny groups.
+    by_name, by_face, by_place = {}, {}, {}
     for p in sorted(photos, key=lambda p: p.date):
-        for name in set(p.persons) - {"_UNKNOWN_"}:
-            by_person.setdefault(name, []).append(p)
-    groups += sorted(by_person.items(), key=lambda g: -len(g[1]))
-    return [{"title": t, "keys": [key(p) for p in ps]} for t, ps in groups if ps]
+        for name in named(p):
+            by_name.setdefault(name, []).append(p)
+        for face in {f.person_info.uuid: f for f in p.face_info if f.person_info and not is_named(f.person_info.name)}:
+            by_face.setdefault(face, []).append(p)
+        if p.moment_info and p.moment_info.title:
+            by_place.setdefault(p.moment_info.title, []).append(p)
+    unnamed = [ps for ps in sorted(by_face.values(), key=len, reverse=True) if len(ps) >= MIN_SIZE]
+    groups += sorted(by_name.items(), key=lambda g: -len(g[1]))
+    groups += [(f"Unnamed person {n}", ps) for n, ps in enumerate(unnamed, 1)]
+    groups += sorted(((t, ps) for t, ps in by_place.items() if len(ps) >= MIN_SIZE), key=lambda g: -len(g[1]))
+    # A group of one photo is no use.
+    return [{"title": t, "keys": [key(p) for p in ps]} for t, ps in groups if len(ps) > 1]
+
+
+def is_named(name) -> bool:
+    return bool(name) and name != "_UNKNOWN_"
+
+
+def named(p) -> set[str]:
+    return {n for n in p.persons if is_named(n)}
 
 
 def is_document(p) -> bool:
@@ -148,7 +172,8 @@ def main():
     for g in groups:
         print(f"  {g['title']:24} {len(g['keys']):6}")
 
-    # Only keys, group titles and names: this file goes over plain HTTP (rule in docs/PLAN.md).
+    # Only keys and group titles, with people's and places' names: this goes over plain HTTP
+    # (rule in docs/PLAN.md).
     (OUT / "public").mkdir(parents=True, exist_ok=True)
     phone = {"photos": sorted(by_key), "shared": sorted(shared_keys), "groups": groups}
     (OUT / "public" / "groups.json").write_text(json.dumps(phone))

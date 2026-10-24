@@ -33,7 +33,7 @@ appears as a card, and a swipe decides whether it stays or goes.
   gallery matters more.
 
 - **Mac data on the network** (2026-10-24): plain HTTP only inside the home Wi-Fi, and only keys and group
-  names, which may hold people's names (Taras: names are public anyway); no recognised text or places. Plain HTTP means anyone on the same network can read
+  names, which may hold people's and places' names (Taras: names are public anyway); no recognised text. Plain HTTP means anyone on the same network can read
   it, so it must never cross the internet or a public Wi-Fi. If the app ever needs the Mac's data away
   from home, choose then between putting the file inside the app (no network at all) and HTTPS.
   Stop the Mac server when not using it: it listens on whatever Wi-Fi the Mac joins.
@@ -142,8 +142,10 @@ Apple's Photos on the Mac already computed, and our own model only where the fir
 
    Status of 5b: built (2026-10-24), device check pending. Counts on the Mac: worst shots 4315 (camera
    photos, lowest Apple score first), documents and receipts 332, photos with text 951, biggest files
-   7334. On the phone they come first on the start screen. Open question for Taras: groups per named
-   person (osxphotos has them), which would send names over HTTP against the rule above.
+   7334. On the phone they come first on the start screen. Added after Taras's look: food, people with
+   no one named, a group per named person, per face group Photos made with no name (20+ photos), and
+   per place title of Photos' moments (20+ photos). Left out: shared albums (not his photos), closed
+   eyes (osxphotos does not say what its `eye_state` values mean).
 
 6. **Decide on our own model (level 3, CLIP).** After 4 and 5, list what is still badly grouped (for
    example memes vs invitations among screenshots, if Apple's text and labels do not split them).

@@ -151,3 +151,11 @@ photos first (8 persons). New problem: about 1 photo in 10 stays black for 15-20
 expo-image already allows iCloud downloads (`isNetworkAccessAllowed = true`, read in
 `PhotoLibraryAssetLoader.swift`). Cause unknown; `PhotoImage` now logs a failure's error and photos
 still loading after 10 s, to find it.
+
+Black photos did not come back on Taras's next look, even for long videos, and nothing was logged;
+the logging stays in case they return. Added groups, all approved by Taras: food (label "Food", 324),
+people with no one named (faces but no named person, 1057), a group per named person, per face group
+Photos made with no name (9 with 20+ photos; the 3126 clusters are mostly strangers seen once), per
+place title of Photos' moments (28 with 20+ photos, same title merged across moments). Groups of one
+photo are left out. Not built: closed eyes, since `eye_state` holds 0, 1 or 2 with no meaning in
+osxphotos' docs or source (2 is the most common, so maybe "open"; a guess).

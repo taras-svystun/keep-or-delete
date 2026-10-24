@@ -54,3 +54,8 @@ appears as a card, and a swipe decides whether it stays or goes.
    - it shows only screenshots, as many as the Photos "Screenshots" album;
    - swipe, undo and the review screen behave as above (session logic covered by unit tests);
    - after Done and the iOS prompt, the photos are in Recently Deleted.
+
+   Status (2026-10-24): code done, tests, typecheck and `expo-doctor` pass on the Mac. Device checks
+   not done yet. First run stopped at "You need to be signed in to Expo Go and Expo CLI": Taras needs a
+   free Expo account, signed in with `npx expo login` on the Mac and in the Expo Go app.
+   Known gap: kept photos show again after a restart (nothing is saved yet); first fundamental after the MVP.

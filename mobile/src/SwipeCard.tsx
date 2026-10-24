@@ -1,5 +1,6 @@
 import { useRef } from 'react';
-import { Animated, Dimensions, Image, PanResponder, StyleSheet } from 'react-native';
+import { Animated, Dimensions, PanResponder, StyleSheet } from 'react-native';
+import { PhotoImage } from './PhotoImage';
 import type { Choice } from './session';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
@@ -35,8 +36,7 @@ export function SwipeCard({ photoId, onSwipe }: { photoId: string; onSwipe: (c: 
 
   return (
     <Animated.View style={[styles.card, { transform: [{ translateX: x }, { rotate }] }]} {...pan.panHandlers}>
-      {/* expo-media-library lets Image load iOS photos by their ph:// id. */}
-      <Image source={{ uri: photoId }} style={styles.image} resizeMode="contain" />
+      <PhotoImage photoId={photoId} style={styles.image} resizeMode="contain" />
     </Animated.View>
   );
 }

@@ -58,4 +58,7 @@ appears as a card, and a swipe decides whether it stays or goes.
    Status (2026-10-24): code done, tests, typecheck and `expo-doctor` pass on the Mac. Device checks
    not done yet. First run stopped at "You need to be signed in to Expo Go and Expo CLI": Taras needs a
    free Expo account, signed in with `npx expo login` on the Mac and in the Expo Go app.
+   2026-10-24, first run on the iPhone: the app found ~2000 screenshots but showed no photo, error
+   "No suitable image URL loader found ph://…". Cause: React Native's Image cannot load ph:// ids in
+   Expo Go. Fix: `PhotoImage` asks `Asset.getUri()` for a file:// URI first. Waits for a device check.
    Known gap: kept photos show again after a restart (nothing is saved yet); first fundamental after the MVP.

@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { FlatList, Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
+import { PhotoImage } from './PhotoImage';
 import { toDelete } from './session';
 
 // End of a session: every marked photo is checked; tap one to spare it, then press Done.
@@ -32,7 +33,7 @@ export function ReviewScreen({
         keyExtractor={(id) => id}
         renderItem={({ item }) => (
           <Pressable style={styles.cell} onPress={() => toggle(item)}>
-            <Image source={{ uri: item }} style={[styles.thumb, unchecked.has(item) && styles.spared]} />
+            <PhotoImage photoId={item} style={[styles.thumb, unchecked.has(item) && styles.spared]} />
             {!unchecked.has(item) && <Text style={styles.check}>✓</Text>}
           </Pressable>
         )}

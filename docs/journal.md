@@ -213,3 +213,16 @@ movie, shuffled: 51 photos marked `round: 2`. Scores now count only the random 2
 only ever train, since a sample picked for rare kinds would inflate the score. With plain 5-fold
 splits instead of stratified ones the old labels score 70% for both probes (was 71% and 74%),
 which confirms the text gap was noise.
+
+
+## 2026-10-25: step 7, screenshot kinds as groups (phone check pending)
+
+Round two labels: movie 14, fact 10, invitation 9, tech 8, meme 7, profile 2, shopping 1. On the random
+200: probe 74% (was 70%); invitations found 4 of 7, movies 4 of 6, tech 2 of 6. Taras asked whether a
+network with one hidden layer would beat the logistic regression. Predicted no (about 250 photos for
+5000+ weights already; CLIP's vectors are already the output of a deep network) and set the bar at
++5 points before running: it tied at 74%, so dropped, as was the text variant (also 74%).
+`kinds.kind_groups` trains the probe on all labels and sorts every screenshot: Taras's label where he
+gave one, else the probe's best guess, surest first. `probe.py` puts these 11 groups first in
+`groups.json`. Tests: 10 pytest. Found an Expo server and the groups server still running from the day
+before; the groups server listens on any Wi-Fi the Mac joins, against the rule in `docs/PLAN.md`.

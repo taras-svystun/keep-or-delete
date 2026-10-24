@@ -96,13 +96,14 @@ DOCUMENT_LABELS = {"Document", "Printed Page", "Receipt", "Handwriting", "Ticket
 MIN_SIZE = 20
 
 
-def build_groups(photos) -> list[dict]:
-    """Groups for the phone, each a title and photo keys in the order the cards show.
+def build_groups(photos, first=()) -> list[dict]:
+    """Groups for the phone, each a title and photo keys in the order the cards show. `first` holds
+    (title, photos) groups made elsewhere, such as the screenshot kinds, to show before these.
 
     Camera photos means photos that are not screenshots: the phone already has a screenshots group.
     """
     camera = sorted((p for p in photos if p.isphoto and not p.screenshot), key=lambda p: p.date)
-    groups = [
+    groups = list(first) + [
         ("Worst shots first", sorted(camera, key=lambda p: p.score.overall)),
         ("Documents and receipts", [p for p in camera if is_document(p)]),
         ("Photos with text", [p for p in camera if p.search_info.detected_text]),
@@ -167,7 +168,9 @@ def main():
     with_name = Counter((key(p), p.original_filename) for p in photos)
     print(f"Key plus filename: {sum(c for c in with_name.values() if c > 1)} items still share one")
 
-    groups = build_groups(photos)
+    from kinds import kind_groups
+
+    groups = build_groups(photos, kind_groups(photos))
     print("\nGroups for the phone:")
     for g in groups:
         print(f"  {g['title']:24} {len(g['keys']):6}")

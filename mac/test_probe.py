@@ -1,7 +1,7 @@
 from datetime import datetime
 from types import SimpleNamespace
 
-from probe import build_groups
+from probe import build_groups, key
 
 
 def face(name, uuid=None):
@@ -68,3 +68,10 @@ def test_faces_with_no_name_and_places_need_20_photos():
     assert "Unnamed person 1" in titles and "Lviv" in titles and "Kyiv" not in titles
     assert len(keys(g, "People, no one named")) == 20
 
+
+
+def test_groups_made_elsewhere_come_first():
+    shot = photo(4, screenshot=True)
+    other = photo(5, screenshot=True)
+    groups = build_groups([shot, other], [("Screenshots: chat", [shot, other])])
+    assert groups[0] == {"title": "Screenshots: chat", "keys": [key(shot), key(other)]}

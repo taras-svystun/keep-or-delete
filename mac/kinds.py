@@ -3,7 +3,9 @@
 1. Text rules (level 2): keywords in Apple's recognised text and labels.
 2. CLIP zero-shot: which short description ("a screenshot of a chat") the image is closest to.
 3. CLIP probe: a logistic regression on CLIP's image vectors, trained on the labels and scored by
-   5-fold cross-validation, so each photo is judged by a model that never saw it.
+   5-fold cross-validation, so each photo is judged by a model that never saw it. The probe is what
+   sorts all screenshots into kind groups (`kind_groups`, called by probe.py). Tried and dropped,
+   both tying it at 74%: adding the recognised text, and a network with one hidden layer.
 The rules and descriptions were written before reading the labels, so neither is tuned to them.
 
 Scores count only the random sample, so they stay an honest guess for all screenshots. Photos added
@@ -145,7 +147,7 @@ def load_clip():
     return model, preprocess, open_clip.get_tokenizer(MODEL), device
 
 
-def vectors_for(items: list[dict], clip) -> np.ndarray:
+def vectors_for(items: list[dict], clip=None) -> np.ndarray:
     """CLIP image vectors, cached in mac/out/ so each photo is embedded once."""
     cache = {}
     if VECTORS.exists():
@@ -153,7 +155,7 @@ def vectors_for(items: list[dict], clip) -> np.ndarray:
         cache = dict(zip(saved["uuids"], saved["vectors"]))
     missing = [s for s in items if s["uuid"] not in cache]
     if missing:
-        model, preprocess, _, device = clip
+        model, preprocess, _, device = clip or load_clip()
         print(f"Embedding {len(missing)} photos...", flush=True)
         cache.update(zip([s["uuid"] for s in missing],
                          image_vectors(model, preprocess, [s["image"] for s in missing], device)))
@@ -179,6 +181,35 @@ def honest_guesses(features, truth: list[str], random_rows: list[int]) -> list[s
         model = probe().fit(features[fit], [truth[i] for i in fit])
         guess.update(zip(test, model.predict(features[test])))
     return [guess[i] for i in random_rows]
+
+
+def order_by_kind(uuids: list[str], labels: dict[str, str], classes: list[str], chance) -> dict[str, list[str]]:
+    """Each screenshot's kind, Taras's label first, else the probe's best guess; surest first in a kind."""
+    picks = []
+    for uuid, row in zip(uuids, chance):
+        if uuid in labels:
+            picks.append((labels[uuid], 2.0, uuid))
+        else:
+            best = int(np.argmax(row))
+            picks.append((classes[best], float(row[best]), uuid))
+    kinds = {}
+    for kind, sure, uuid in sorted(picks, key=lambda x: -x[1]):
+        kinds.setdefault(kind, []).append(uuid)
+    return kinds
+
+
+def kind_groups(photos) -> list[tuple[str, list]]:
+    """A group per kind of screenshot, in the order of KINDS; empty before any labels exist."""
+    if not LABELS.exists():
+        return []
+    sample = json.loads(SAMPLE.read_text())
+    labels = json.loads(LABELS.read_text())
+    labelled = [s for s in sample if s["uuid"] in labels]
+    shots = {p.uuid: p for p in photos if p.screenshot and p.path_derivatives}
+    items = [{"uuid": u, "image": p.path_derivatives[0]} for u, p in shots.items()]
+    model = probe().fit(vectors_for(labelled), [labels[s["uuid"]] for s in labelled])
+    kinds = order_by_kind(list(shots), labels, list(model.classes_), model.predict_proba(vectors_for(items)))
+    return [(f"Screenshots: {KINDS[k]}", [shots[u] for u in kinds[k]]) for k in KINDS if k in kinds]
 
 
 def add_rare(per_kind: int = 17):
@@ -227,13 +258,6 @@ def main():
     report("CLIP zero-shot", scored, [kinds[i] for i in (images[random_rows] @ prompts.T).argmax(1)])
 
     report("CLIP probe (5-fold)", scored, honest_guesses(images, truth, random_rows))
-    # Words of the recognised text beside the image: character pieces work across the four languages.
-    from scipy.sparse import csr_matrix, hstack
-    from sklearn.feature_extraction.text import TfidfVectorizer
-    words = TfidfVectorizer(analyzer="char_wb", ngram_range=(3, 4), min_df=2, sublinear_tf=True)
-    text = words.fit_transform([s["text"].lower() for s in rows])
-    both = hstack([csr_matrix(images), text]).tocsr()
-    report("CLIP probe + text (5-fold)", scored, honest_guesses(both, truth, random_rows))
 
 
 if __name__ == "__main__":

@@ -176,3 +176,9 @@ Apple's Photos on the Mac already computed, and our own model only where the fir
    Checks:
    - cross-validated accuracy stays at 70%+ and invitations are found in at least half the cases;
    - each kind group shows on the phone and a look at 20 photos per group seems right to Taras.
+
+   Status (2026-10-25): built, phone check pending. Round two: 51 photos, 31 of them rare kinds. On the
+   random 200 the probe now scores 74% (was 70%), finds 4 of 7 invitations (was 1) and 4 of 6 movies
+   (was 0); tech stays weak (2 of 6). A one-hidden-layer network and adding text both tie at 74%, so
+   dropped. All 2292 screenshots sorted, Taras's own labels kept as given: profile 1087, fact 261,
+   shopping 214, music 186, meme 150, chat 150, map 110, movie 49, tech 40, invitation 27, other 18.

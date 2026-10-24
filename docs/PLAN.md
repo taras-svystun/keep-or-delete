@@ -25,6 +25,13 @@ appears as a card, and a swipe decides whether it stays or goes.
   a session a review screen shows every photo marked for delete, all checked; Taras can uncheck a few
   and press Done. Then they go to the iPhone's Recently Deleted album.
 
+- **How we plan**: only the next 2-3 steps are written in detail. Further ahead, what each step teaches
+  would rewrite the plan anyway; one step at a time hides where we are going. When a step is done,
+  add the next one.
+- **Away from home Wi-Fi**: when needed, use `npx expo start --tunnel` (free; the Mac must still run).
+  No standalone app for now: it needs Xcode, so a macOS upgrade that cannot be undone, and a clean
+  gallery matters more.
+
 ## Facts found (2026-10-24)
 
 - A free Apple ID can install your own app on your iPhone, but it stops opening after 7 days and must
@@ -55,12 +62,19 @@ appears as a card, and a swipe decides whether it stays or goes.
    - swipe, undo and the review screen behave as above (session logic covered by unit tests);
    - after Done and the iOS prompt, the photos are in Recently Deleted.
 
-   Status (2026-10-24): code done, tests, typecheck and `expo-doctor` pass on the Mac. Device checks
-   not done yet. First run stopped at "You need to be signed in to Expo Go and Expo CLI": Taras needs a
-   free Expo account, signed in with `npx expo login` on the Mac and in the Expo Go app.
-   2026-10-24, first run on the iPhone: the app found ~2000 screenshots but showed no photo, error
-   "No suitable image URL loader found ph://…". Cause: React Native's Image cannot load ph:// ids in
-   Expo Go. Fix: `PhotoImage` asks `Asset.getUri()` for a file:// URI first.
-   Device check (2026-10-24): photos show (under a second each, full-size files), swipe and review work,
-   Done deleted the photos. Not confirmed yet: the count matches the Photos "Screenshots" album.
-   Known gap: kept photos show again after a restart (nothing is saved yet); first fundamental after the MVP.
+   Status: **done** (2026-10-24). All four checks passed on the iPhone; the count matches the album.
+   Fixed on the way: Expo login; photos did not show (React Native's Image cannot load `ph://` ids in
+   Expo Go, so `PhotoImage` gets a `file://` URI first); the review check mark was invisible on light
+   photos. Details in `docs/journal.md`.
+
+2. **Remember decisions across restarts.** Today kept photos show again after the app restarts.
+   Checks:
+   - every swipe is saved at once, on the phone;
+   - after closing and reopening, kept photos do not show again and marked ones are still marked;
+   - deleted photos never come back; the saving logic is covered by unit tests.
+
+3. **Faster photos.** Each card loads the full-size file (up to a second); the review grid loads
+   full-size files for small cells.
+   Checks:
+   - a card appears with no visible wait on the iPhone;
+   - the review grid with 100+ marked photos scrolls without stutter.

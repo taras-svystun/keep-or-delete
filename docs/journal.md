@@ -119,3 +119,13 @@ Cause of the first five misses: keys 1 ms off. osxphotos' `date` keeps only micr
 like 51.4998 ms became 51.5 and rounded up, while the phone rounds the full value down. Fix: the probe
 builds the key from the raw database time (`imageDate_timestamp`, seconds since 2001); checked that
 it gives the phone's key for all five. The other misses are not yet explained.
+
+## 2026-10-24: step 5a done
+
+After the raw-time fix: 6088 of 6144 phone items (99.1%) find exactly one Mac photo, so the check
+passes. The 31 without a match: most are October 2026 photos with no Mac photo within hours (not
+synced to the Mac, estimate); two are 0.3 s and 0.9 s off at the same size (cause unknown). The 25
+with several: all 34 shared Mac keys have whole-second times (.000 ms), 18 of 77 items are videos,
+none are bursts, and only 7 keys share a filename. So they are app-saved images and videos, not
+burst frames; they get no Mac groups. Accepted: 0.4% of photos. Agreed a rule for sending Mac data
+over the network (`docs/PLAN.md`, Agreed).

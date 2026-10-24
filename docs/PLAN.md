@@ -32,6 +32,12 @@ appears as a card, and a swipe decides whether it stays or goes.
   No standalone app for now: it needs Xcode, so a macOS upgrade that cannot be undone, and a clean
   gallery matters more.
 
+- **Mac data on the network** (2026-10-24): plain HTTP only inside the home Wi-Fi, and only keys and group
+  names (no recognised text, persons or places). Plain HTTP means anyone on the same network can read
+  it, so it must never cross the internet or a public Wi-Fi. If the app ever needs the Mac's data away
+  from home, choose then between putting the file inside the app (no network at all) and HTTPS.
+  Stop the Mac server when not using it: it listens on whatever Wi-Fi the Mac joins.
+
 ## Facts found (2026-10-24)
 
 - A free Apple ID can install your own app on your iPhone, but it stops opening after 7 days and must
@@ -121,7 +127,9 @@ Apple's Photos on the Mac already computed, and our own model only where the fir
    b. If the probe holds: the script writes `groups.json` (photo key → groups) into the app's folder,
       git-ignored because it is personal data; the app shows these groups beside level 1. First
       candidates: worst shots first, receipts and documents, events, burst frames never picked.
-   Status of 5a: Mac part **done** (2026-10-24), phone match pending. Apple's fields on this Mac
+   Status of 5a: **done** (2026-10-24). Phone match: 6088 of 6144 phone items (99.1%) find exactly
+   one Mac photo; 31 none (mostly October 2026 photos not on the Mac), 25 several (images with
+   whole-second times, saved from apps). Apple's fields on this Mac
    (Photos 9.6, macOS 14): quality score 100%, labels 84% ("Document" on 338 camera photos, "Receipt"
    28), recognised text 40%, named persons 21%, moments with a place title 1360 of 2286. Empty: document
    types, events, trips, AI captions, burst picks (3 burst photos only). Key (ms time + size) is unique

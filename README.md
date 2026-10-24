@@ -28,7 +28,8 @@ mac/.venv/bin/python -m http.server 8765 -d mac/out/public         # leave runni
 ```
 
 The app logs in the `expo start` terminal how many phone photos match a Mac photo. `mac/out/` is
-personal data: never commit it. The server shares `mac/out/public/` with anyone on the same Wi-Fi.
+personal data: never commit it. The server shares `mac/out/public/` over plain HTTP with anyone on
+the same Wi-Fi: run it only at home, and stop it (Ctrl+C) when done. Rule in `docs/PLAN.md`.
 
 ## Test
 

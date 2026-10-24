@@ -81,3 +81,6 @@ appears as a card, and a swipe decides whether it stays or goes.
    Checks:
    - a card appears with no visible wait on the iPhone;
    - the review grid with 100+ marked photos scrolls without stutter.
+
+   Status: **code done, device check pending** (2026-10-24). `PhotoImage` now uses `expo-image`, which
+   loads `ph://` ids at the view's size; the next card is loaded under the current one.

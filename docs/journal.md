@@ -40,3 +40,13 @@ by dropping the callback ref, which was not needed.
 
 Taras checked on the iPhone: kept photos stay hidden after a restart, marked ones stay marked, an
 undone swipe shows again, spared and deleted photos do not come back, nor do photos deleted in Photos.
+
+## 2026-10-24: step 3, faster photos (device check pending)
+
+Cause of the wait: `PhotoImage` asked expo-media-library for the full-size file (`getUri()`), then
+React Native's `Image` decoded all of it, even for a small review cell. Fix: `expo-image` (in Expo Go)
+loads `ph://` ids itself through `PHImageManager`, asking for the view's size times the screen scale,
+so a review cell gets a thumbnail (checked in its source, `ios/Loaders/PhotoLibraryAssetLoader.swift`,
+v58.0.17). Memory cache only, so it keeps no extra copies of photos on disk.
+Also a card stack: the next photo is rendered under the current card, keyed by photo id, so after a
+swipe React keeps that same card, already loaded, as the new top card.

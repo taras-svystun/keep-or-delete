@@ -1,29 +1,8 @@
-import { Asset } from 'expo-media-library';
-import { useEffect, useState } from 'react';
-import { ActivityIndicator, Image, ImageProps, View } from 'react-native';
+import { Image, ImageProps } from 'expo-image';
 
-// React Native's Image has no loader for ph:// photo ids in Expo Go, so ask
-// the media library for a file:// URI of the photo first, then show that.
+// expo-image loads ph:// photo ids itself, at the size of the view (a small cell gets a small
+// image, not the full file). Memory cache only: the photos are already on the phone, so a disk
+// cache would just keep extra copies of them.
 export function PhotoImage({ photoId, ...props }: { photoId: string } & Omit<ImageProps, 'source'>) {
-  const [uri, setUri] = useState<string | null>(null);
-
-  useEffect(() => {
-    let alive = true;
-    new Asset(photoId)
-      .getUri()
-      .then((u) => alive && setUri(u))
-      .catch((e) => console.warn(`No URI for ${photoId}: ${String(e)}`));
-    return () => {
-      alive = false;
-    };
-  }, [photoId]);
-
-  if (!uri) {
-    return (
-      <View style={[props.style, { justifyContent: 'center' }]}>
-        <ActivityIndicator />
-      </View>
-    );
-  }
-  return <Image {...props} source={{ uri }} />;
+  return <Image {...props} source={{ uri: photoId }} cachePolicy="memory" />;
 }

@@ -6,7 +6,7 @@ import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { Decisions, recordReview, recordSession, resumeSession } from './src/decisions';
 import { ReviewScreen } from './src/ReviewScreen';
 import { SwipeCard } from './src/SwipeCard';
-import { currentPhoto, markedForDelete, Session, startSession, swipe, undo } from './src/session';
+import { currentPhoto, markedForDelete, nextPhoto, Session, startSession, swipe, undo } from './src/session';
 import { loadDecisions, saveDecisions } from './src/storage';
 
 type Phase = 'loading' | 'swiping' | 'review';
@@ -78,7 +78,14 @@ export default function App() {
         {phase === 'swiping' && (
           <>
             {photo ? (
-              <SwipeCard key={photo} photoId={photo} onSwipe={(c) => setSession((s) => swipe(s, c))} />
+              <View style={styles.deck}>
+                {/* Keyed by photo, so after a swipe the card underneath becomes the top one with its
+                    photo already loaded. It is fully covered, so only the top card gets touches. */}
+                {[nextPhoto(session), photo].map(
+                  (id) =>
+                    id && <SwipeCard key={id} photoId={id} onSwipe={(c) => setSession((s) => swipe(s, c))} />,
+                )}
+              </View>
             ) : (
               <Text style={styles.empty}>No more screenshots in this session.</Text>
             )}
@@ -107,6 +114,7 @@ const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: '#000', padding: 16, gap: 12 },
   message: { color: '#aaa', textAlign: 'center' },
   empty: { flex: 1, color: '#fff', fontSize: 18, textAlign: 'center', textAlignVertical: 'center' },
+  deck: { flex: 1 },
   row: { flexDirection: 'row', gap: 12 },
   button: { flex: 1, padding: 14, borderRadius: 12, backgroundColor: '#333', alignItems: 'center' },
   buttonText: { color: '#fff', fontSize: 17 },

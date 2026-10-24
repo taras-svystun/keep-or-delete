@@ -13,6 +13,11 @@ export function currentPhoto(s: Session): string | null {
   return s.photoIds[s.choices.length] ?? null;
 }
 
+// The photo under the current card, loaded ahead so it shows at once after a swipe.
+export function nextPhoto(s: Session): string | null {
+  return s.photoIds[s.choices.length + 1] ?? null;
+}
+
 export function swipe(s: Session, choice: Choice): Session {
   if (currentPhoto(s) === null) return s;
   return { ...s, choices: [...s.choices, choice] };

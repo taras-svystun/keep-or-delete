@@ -35,12 +35,13 @@ export function SwipeCard({ photoId, onSwipe }: { photoId: string; onSwipe: (c: 
 
   return (
     <Animated.View style={[styles.card, { transform: [{ translateX: x }, { rotate }] }]} {...pan.panHandlers}>
-      <PhotoImage photoId={photoId} style={styles.image} resizeMode="contain" />
+      <PhotoImage photoId={photoId} style={styles.image} contentFit="contain" />
     </Animated.View>
   );
 }
 
 const styles = StyleSheet.create({
-  card: { flex: 1, borderRadius: 16, overflow: 'hidden', backgroundColor: '#111' },
+  // Cards fill the same box and stack; the last one rendered is on top.
+  card: { position: 'absolute', top: 0, right: 0, bottom: 0, left: 0, borderRadius: 16, overflow: 'hidden', backgroundColor: '#111' },
   image: { flex: 1 },
 });

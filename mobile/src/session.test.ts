@@ -2,6 +2,7 @@ import { expect, test } from '@jest/globals';
 import {
   currentPhoto,
   markedForDelete,
+  nextPhoto,
   remaining,
   startSession,
   swipe,
@@ -14,6 +15,13 @@ test('swiping walks through the photos in order', () => {
   expect(currentPhoto(s)).toBe('a');
   s = swipe(s, 'keep');
   expect(currentPhoto(s)).toBe('b');
+});
+
+test('the next photo is the one after the current', () => {
+  let s = startSession(['a', 'b']);
+  expect(nextPhoto(s)).toBe('b');
+  s = swipe(s, 'keep');
+  expect(nextPhoto(s)).toBeNull();
 });
 
 test('only photos swiped to delete are marked', () => {

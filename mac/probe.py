@@ -100,11 +100,24 @@ def build_groups(photos) -> list[dict]:
     camera = sorted((p for p in photos if p.isphoto and not p.screenshot), key=lambda p: p.date)
     groups = [
         ("Worst shots first", sorted(camera, key=lambda p: p.score.overall)),
-        ("Documents and receipts", [p for p in camera if DOCUMENT_LABELS & set(p.search_info.labels)]),
+        ("Documents and receipts", [p for p in camera if is_document(p)]),
         ("Photos with text", [p for p in camera if p.search_info.detected_text]),
         ("Biggest files first", sorted(photos, key=lambda p: -(p.original_filesize or 0))),
     ]
+    # One group per person named in Photos' People album, the person with most photos first.
+    by_person: dict[str, list] = {}
+    for p in sorted(photos, key=lambda p: p.date):
+        for name in set(p.persons) - {"_UNKNOWN_"}:
+            by_person.setdefault(name, []).append(p)
+    groups += sorted(by_person.items(), key=lambda g: -len(g[1]))
     return [{"title": t, "keys": [key(p) for p in ps]} for t, ps in groups if ps]
+
+
+def is_document(p) -> bool:
+    """A paper or card label and no one on it. Without the second part, about 13% were people with a
+    bit of text behind them (Taras's check, step 5b)."""
+    labels = set(p.search_info.labels)
+    return bool(DOCUMENT_LABELS & labels) and not p.face_info and "People" not in labels
 
 
 def main():
@@ -135,7 +148,7 @@ def main():
     for g in groups:
         print(f"  {g['title']:24} {len(g['keys']):6}")
 
-    # Only keys and group titles: this file goes over plain HTTP (rule in docs/PLAN.md).
+    # Only keys, group titles and names: this file goes over plain HTTP (rule in docs/PLAN.md).
     (OUT / "public").mkdir(parents=True, exist_ok=True)
     phone = {"photos": sorted(by_key), "shared": sorted(shared_keys), "groups": groups}
     (OUT / "public" / "groups.json").write_text(json.dumps(phone))

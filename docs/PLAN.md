@@ -33,7 +33,7 @@ appears as a card, and a swipe decides whether it stays or goes.
   gallery matters more.
 
 - **Mac data on the network** (2026-10-24): plain HTTP only inside the home Wi-Fi, and only keys and group
-  names (no recognised text, persons or places). Plain HTTP means anyone on the same network can read
+  names, which may hold people's names (Taras: names are public anyway); no recognised text or places. Plain HTTP means anyone on the same network can read
   it, so it must never cross the internet or a public Wi-Fi. If the app ever needs the Mac's data away
   from home, choose then between putting the file inside the app (no network at all) and HTTPS.
   Stop the Mac server when not using it: it listens on whatever Wi-Fi the Mac joins.

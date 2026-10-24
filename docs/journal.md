@@ -142,3 +142,12 @@ groups first. It asks the Mac at the start of loading, so the wait overlaps the 
 the Mac the phone groups still show. Tests: 2 pytest (`mac/test_probe.py`), 4 jest in `mac.test.ts`.
 People: osxphotos reads named persons (21% of photos), but group titles would be names sent over
 plain HTTP, against the rule agreed in step 5a; asked Taras.
+
+Taras's first look: worst shots are right; photos with text about 1 in 30 wrong; documents 5-10%
+wrong (people in a landscape or a train with a bit of text). Checked: 38 of 302 document photos carry
+the "People" label, 35 have faces. Fix: documents leave out photos with a face or "People" (258 left).
+Taras approved people's names over the home Wi-Fi, so there is now one group per named person, most
+photos first (8 persons). New problem: about 1 photo in 10 stays black for 15-20 s. Not the cause:
+expo-image already allows iCloud downloads (`isNetworkAccessAllowed = true`, read in
+`PhotoLibraryAssetLoader.swift`). Cause unknown; `PhotoImage` now logs a failure's error and photos
+still loading after 10 s, to find it.

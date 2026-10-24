@@ -163,3 +163,12 @@ osxphotos' docs or source (2 is the most common, so maybe "open"; a guess).
 Taras checked the new groups: they fit. Added groups "Eye state 0", "1", "2" so Taras can say which
 value means closed eyes. Black photos came back: five logged "still loading after 10 s", none with an
 error, none found on the Mac by uuid. Both are open questions in `docs/PLAN.md` for the next session.
+
+## 2026-10-24: step 5b, more detail on photos that stay black
+
+A photo still loading after 10 s now logs its file name, media type, width x height, Mac key, whether
+it is in iCloud (`Asset.getIsInCloud`) and the last download percent (expo-image `onProgress`), so the
+Mac key can find it on the Mac. Lead, not yet checked on the phone: expo-image's
+`PhotoLibraryAssetLoader.swift` calls `requestImage` with iCloud download allowed but ignores
+`PHImageErrorKey` in the result, so a failed or very slow iCloud download leaves the photo black with no
+error. If the log shows "in iCloud true" and a percent under 100, that is the cause.

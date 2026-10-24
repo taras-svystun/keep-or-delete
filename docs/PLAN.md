@@ -73,8 +73,10 @@ appears as a card, and a swipe decides whether it stays or goes.
   rename that group "Closed eyes" and drop or rename the others.
 - **Photos that stay black** (step 5b): some photos still load after 10 s and never show, with no error.
   Five ids logged on 2026-10-24 (`ph://4AAD55F3-…`, `F6AF4FA8-…`, `0744200A-…`, `53B295D6-…`,
-  `CB80A2B3-…`); none is a Mac uuid, so the Mac cannot say what they are. Next: log the group, media type,
-  size and download progress (expo-image `onProgress`) of a stalled photo, then find the cause.
+  `CB80A2B3-…`); none is a Mac uuid, so the Mac cannot say what they are. A stalled photo now logs its
+  file name, media type, size, Mac key, whether it is in iCloud and how far it downloaded. Lead (from
+  expo-image's source): when iOS fails to fetch a photo from iCloud, expo-image drops the error, so the
+  photo stays black with nothing logged. Next: Taras swipes until it happens and sends the log.
   Step 5b closes when both are settled.
 
 ## Steps

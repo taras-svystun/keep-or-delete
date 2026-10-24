@@ -73,7 +73,7 @@ appears as a card, and a swipe decides whether it stays or goes.
    - after closing and reopening, kept photos do not show again and marked ones are still marked;
    - deleted photos never come back; the saving logic is covered by unit tests.
 
-   Status: **code done, device check pending** (2026-10-24). Decisions live in `decisions.json` in the
+   Status: **done** (2026-10-24). All checks passed on the iPhone. Decisions live in `decisions.json` in the
    app's documents folder; logic in `mobile/src/decisions.ts`, 6 unit tests. Details in `docs/journal.md`.
 
 3. **Faster photos.** Each card loads the full-size file (up to a second); the review grid loads

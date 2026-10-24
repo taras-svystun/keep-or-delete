@@ -35,3 +35,8 @@ cheap, and there is nothing to query. Accepted risk: if the app dies mid-write t
 starts empty and kept photos show again. Revisit if it ever happens.
 Also: first `expo lint` run added ESLint; fixed its errors in `SwipeCard` (refs read during render)
 by dropping the callback ref, which was not needed.
+
+## 2026-10-24: step 2 done
+
+Taras checked on the iPhone: kept photos stay hidden after a restart, marked ones stay marked, an
+undone swipe shows again, spared and deleted photos do not come back, nor do photos deleted in Photos.

@@ -17,3 +17,5 @@ move it into `docs/PLAN.md`.
   on the Mac (see above).
 - Pinch to zoom a photo before deciding (Taras, 2026-10-24). Cheap: `react-native-gesture-handler` and
   `react-native-reanimated` are in Expo Go. The pinch must not fight the swipe.
+- Mac level groups (see `docs/research/photo-metadata.md`): worst shots first by Apple's quality score,
+  receipts and documents, events, burst frames never picked, Shared with You.

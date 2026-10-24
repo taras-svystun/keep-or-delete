@@ -57,3 +57,11 @@ Taras checked on the iPhone: cards appear with no visible wait, and 100+ photos 
 Added to ideas: screenshot split by meaning, select text then delete, pinch to zoom.
 Checked free metadata for the next step: no burst flag and no file size in `expo-media-library`, so
 "longest videos first" uses duration as a stand-in for size.
+
+## 2026-10-24: research, metadata for groups
+
+Checked what can group photos (`docs/research/photo-metadata.md`). Verdict: the phone alone gives about a
+dozen groups, including bursts and screen recordings through iOS smart albums; the big jump in meaning
+(blurry shots, receipts, events, recognised text) is already computed by Apple and readable on the Mac
+with osxphotos. Sources: expo-media-library 58.0.12 source, Apple PHAssetCollectionSubtype, osxphotos API.
+Planned step 4 (groups from phone metadata) and step 5 (a week of use).

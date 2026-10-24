@@ -54,7 +54,8 @@ appears as a card, and a swipe decides whether it stays or goes.
 
 ## Open questions
 
-- How does the phone match a photo the Mac analysed (ids differ between devices)?
+- How does the phone match a photo the Mac analysed (ids differ between devices)? Likely answer, untested:
+  creation time to the millisecond plus width and height. See `docs/research/photo-metadata.md`.
 
 ## Steps
 
@@ -89,3 +90,15 @@ appears as a card, and a swipe decides whether it stays or goes.
    Status: **done** (2026-10-24). Taras checked on the iPhone: cards load fast, 100+ photos scroll
    smoothly. `PhotoImage` uses `expo-image`, which loads `ph://` ids at the view's size; the next card
    is loaded under the current one.
+
+4. **Groups.** A start screen lists groups with their photo counts; tapping one opens the same swipe
+   and review for that group only. Groups from free phone metadata (`docs/research/photo-metadata.md`,
+   level 1): screenshots, videos (longest first, shown as a still frame with the duration), bursts
+   (iOS smart album, if Expo returns it), the rest of the photos by month, oldest first.
+   Checks:
+   - each group's count matches its album in Photos (screenshots, videos, bursts);
+   - a photo decided in one group does not show again in another;
+   - grouping logic covered by unit tests.
+
+5. **A week of real use.** Taras cleans with the app; then we pick the next step from `docs/IDEAS.md`
+   by what got in the way.

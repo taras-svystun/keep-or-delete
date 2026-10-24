@@ -34,7 +34,10 @@ export function ReviewScreen({
         renderItem={({ item }) => (
           <Pressable style={styles.cell} onPress={() => toggle(item)}>
             <PhotoImage photoId={item} style={[styles.thumb, unchecked.has(item) && styles.spared]} />
-            {!unchecked.has(item) && <Text style={styles.check}>✓</Text>}
+            {/* A filled badge with a white ring stays visible on any photo, light or dark. */}
+            <View style={[styles.badge, !unchecked.has(item) && styles.badgeOn]}>
+              {!unchecked.has(item) && <Text style={styles.check}>✓</Text>}
+            </View>
           </Pressable>
         )}
       />
@@ -56,7 +59,21 @@ const styles = StyleSheet.create({
   cell: { flex: 1 / 3, aspectRatio: 1, padding: 2 },
   thumb: { flex: 1, borderRadius: 6 },
   spared: { opacity: 0.3 },
-  check: { position: 'absolute', right: 8, bottom: 6, color: '#fff', fontSize: 22, fontWeight: 'bold' },
+  badge: {
+    position: 'absolute',
+    right: 8,
+    bottom: 8,
+    width: 26,
+    height: 26,
+    borderRadius: 13,
+    borderWidth: 2,
+    borderColor: '#fff',
+    backgroundColor: 'rgba(0,0,0,0.3)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  badgeOn: { backgroundColor: '#c0392b' },
+  check: { color: '#fff', fontSize: 15, fontWeight: 'bold' },
   row: { flexDirection: 'row', gap: 12 },
   button: { flex: 1, padding: 14, borderRadius: 12, backgroundColor: '#333', alignItems: 'center' },
   danger: { backgroundColor: '#c0392b' },

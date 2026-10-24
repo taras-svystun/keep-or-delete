@@ -60,5 +60,7 @@ appears as a card, and a swipe decides whether it stays or goes.
    free Expo account, signed in with `npx expo login` on the Mac and in the Expo Go app.
    2026-10-24, first run on the iPhone: the app found ~2000 screenshots but showed no photo, error
    "No suitable image URL loader found ph://…". Cause: React Native's Image cannot load ph:// ids in
-   Expo Go. Fix: `PhotoImage` asks `Asset.getUri()` for a file:// URI first. Waits for a device check.
+   Expo Go. Fix: `PhotoImage` asks `Asset.getUri()` for a file:// URI first.
+   Device check (2026-10-24): photos show (under a second each, full-size files), swipe and review work,
+   Done deleted the photos. Not confirmed yet: the count matches the Photos "Screenshots" album.
    Known gap: kept photos show again after a restart (nothing is saved yet); first fundamental after the MVP.

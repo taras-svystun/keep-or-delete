@@ -10,3 +10,10 @@ move it into `docs/PLAN.md`.
   "invitation" or "meme") and send its results to the phone over the home Wi-Fi.
 - A smarter duplicates finder: compare image content, not only size and date.
 - A way to see kept photos again (today a kept photo never shows again; the only reset is deleting the app data).
+- Split screenshots into events/invitations and memes/facts. Needs text recognition on the Mac, and the
+  open question of matching Mac photo ids to phone ids.
+- Select text on a photo, save it as text, delete the photo (Taras, 2026-10-24). iOS Live Text needs a
+  native module that Expo Go lacks, so a standalone app (Xcode, macOS upgrade). Free path: text recognised
+  on the Mac (see above).
+- Pinch to zoom a photo before deciding (Taras, 2026-10-24). Cheap: `react-native-gesture-handler` and
+  `react-native-reanimated` are in Expo Go. The pinch must not fight the swipe.

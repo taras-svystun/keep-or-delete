@@ -50,3 +50,10 @@ so a review cell gets a thumbnail (checked in its source, `ios/Loaders/PhotoLibr
 v58.0.17). Memory cache only, so it keeps no extra copies of photos on disk.
 Also a card stack: the next photo is rendered under the current card, keyed by photo id, so after a
 swipe React keeps that same card, already loaded, as the new top card.
+
+## 2026-10-24: step 3 done
+
+Taras checked on the iPhone: cards appear with no visible wait, and 100+ photos scroll smoothly.
+Added to ideas: screenshot split by meaning, select text then delete, pinch to zoom.
+Checked free metadata for the next step: no burst flag and no file size in `expo-media-library`, so
+"longest videos first" uses duration as a stand-in for size.

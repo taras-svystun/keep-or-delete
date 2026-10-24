@@ -48,6 +48,10 @@ appears as a card, and a swipe decides whether it stays or goes.
   syncs the iPhone's photos to the Mac, and it does: Taras pays for iCloud and the libraries sync. ([osxphotos API](https://rhettbull.github.io/osxphotos/API_README.html))
 - Closest open-source project found: sWipe (Expo, swipe to clean, Android only). ([FOSS Hack](https://fossunited.org/hack/fosshack25/p/naiadj2htq))
 
+- `expo-media-library` 58.0.12 gives for free: media type, `duration` (sortable), `creationTime`,
+  subtypes (screenshot, livePhoto, panorama, hdr and a few more). It does **not** give a burst flag or
+  the file size (read in `build/legacy/MediaLibrary.d.ts`).
+
 ## Open questions
 
 - How does the phone match a photo the Mac analysed (ids differ between devices)?
@@ -82,5 +86,6 @@ appears as a card, and a swipe decides whether it stays or goes.
    - a card appears with no visible wait on the iPhone;
    - the review grid with 100+ marked photos scrolls without stutter.
 
-   Status: **code done, device check pending** (2026-10-24). `PhotoImage` now uses `expo-image`, which
-   loads `ph://` ids at the view's size; the next card is loaded under the current one.
+   Status: **done** (2026-10-24). Taras checked on the iPhone: cards load fast, 100+ photos scroll
+   smoothly. `PhotoImage` uses `expo-image`, which loads `ph://` ids at the view's size; the next card
+   is loaded under the current one.

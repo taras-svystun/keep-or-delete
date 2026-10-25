@@ -177,8 +177,13 @@ Apple's Photos on the Mac already computed, and our own model only where the fir
    - cross-validated accuracy stays at 70%+ and invitations are found in at least half the cases;
    - each kind group shows on the phone and a look at 20 photos per group seems right to Taras.
 
-   Status (2026-10-25): built, phone check pending. Round two: 51 photos, 31 of them rare kinds. On the
+   Status: **done** (2026-10-25). Taras looked at several kind groups on the phone: they look right. Round two: 51 photos, 31 of them rare kinds. On the
    random 200 the probe now scores 74% (was 70%), finds 4 of 7 invitations (was 1) and 4 of 6 movies
    (was 0); tech stays weak (2 of 6). A one-hidden-layer network and adding text both tie at 74%, so
    dropped. All 2292 screenshots sorted, Taras's own labels kept as given: profile 1087, fact 261,
    shopping 214, music 186, meme 150, chat 150, map 110, movie 49, tech 40, invitation 27, other 18.
+
+8. **Smarter time groups** (proposed, not yet agreed). After screenshots, the camera photos still come as
+   48+ month groups: old months hold ~10 photos, recent ones 100-200 (idea from `docs/IDEAS.md`). Merge
+   small months until a group holds about 100-200 photos, and for recent photos use the place titles
+   of Photos' moments that step 5b already reads.

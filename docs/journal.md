@@ -225,3 +225,8 @@ network with one hidden layer would beat the logistic regression. Predicted no (
 gave one, else the probe's best guess, surest first. `probe.py` puts these 11 groups first in
 `groups.json`. Tests: 10 pytest. Found an Expo server and the groups server still running from the day
 before; the groups server listens on any Wi-Fi the Mac joins, against the rule in `docs/PLAN.md`.
+
+## 2026-10-25: step 7 done
+
+Taras looked at several screenshot kind groups on the phone: they look right. Stopped the groups server
+left running since the day before. Proposed step 8, smarter time groups.
